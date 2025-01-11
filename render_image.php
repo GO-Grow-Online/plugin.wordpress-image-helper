@@ -12,7 +12,7 @@ require_once plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-ch
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory; 
 
 $updateChecker = PucFactory::buildUpdateChecker( 
-    'https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/', // URL du dépôt GitHub
+    'https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/plugin-version.json', // URL du dépôt GitHub
     __FILE__, // Chemin du fichier principal du plugin
     'wordpress-image-helper' // Slug unique du plugin
 );
