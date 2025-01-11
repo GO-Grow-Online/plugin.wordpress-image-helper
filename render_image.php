@@ -14,7 +14,7 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 $updateChecker = PucFactory::buildUpdateChecker(
     'https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/', // URL du dépôt GitHub
     __FILE__, // Chemin du fichier principal du plugin
-    'plugin.wordpress-image-helper' // Slug unique du plugin
+    'wordpress-image-helper' // Slug unique du plugin
 );
 
 // Facultatif : Ajouter un jeton d'accès pour les dépôts privés
