@@ -21,7 +21,7 @@ $updateChecker = PucFactory::buildUpdateChecker(
 // $updateChecker->setAuthentication('your-github-token');
 
 // Facultatif : Définir une branche (par défaut : main)
-// $updateChecker->setBranch('main');
+$updateChecker->setBranch('master');
 
 
 
