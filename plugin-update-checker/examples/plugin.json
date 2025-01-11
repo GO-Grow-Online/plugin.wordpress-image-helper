@@ -1,16 +1,16 @@
 {
-	"name": "My Example Plugin",
-	"version": "2.0",
-	"download_url": "https://github.com/YahnisElsts/plugin-update-checker/archive/refs/heads/master.zip",
+	"name": "Wordpress Image Renderer",
+	"version": "1.0",
+	"download_url": "https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/archive/refs/heads/master.zip",
 
-	"homepage": "http://example.com/",
+	"homepage": "https://grow-online.be/",
 	"requires": "4.5",
 	"tested": "4.8",
 	"last_updated": "2017-01-01 16:17:00",
 	"upgrade_notice": "Here's why you should upgrade...",
 
-	"author": "Janis Elsts",
-	"author_homepage": "http://example.com/",
+	"author": "Grow Online",
+	"author_homepage": "https://grow-online.be/",
 
 	"sections": {
 		"description": "(Required) Plugin description. Basic HTML can be used in all sections.",
