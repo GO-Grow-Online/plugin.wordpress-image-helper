@@ -4,7 +4,7 @@
 	"download_url": "https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/archive/refs/heads/master.zip",
 
 	"homepage": "https://grow-online.be/",
-	"requires": "4.5",
+	"requires": "4.5", 
 	"tested": "4.8",
 	"last_updated": "2017-01-01 16:17:00",
 	"upgrade_notice": "Here's why you should upgrade...",
