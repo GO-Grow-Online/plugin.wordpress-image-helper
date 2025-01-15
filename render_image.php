@@ -6,29 +6,23 @@
  * Author: Grow Online
  */
 
-
-require_once plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-checker.php';
-
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory; 
-
-$updateChecker = PucFactory::buildUpdateChecker(  
-    'https://grow-online.be/plugins/image-helper.json',
-    __FILE__,
-    'wordpress-image-helper'
-);
-
-// Facultatif : Ajouter un jeton d'accès pour les dépôts privés
-// $updateChecker->setAuthentication('your-github-token');
-
-// Facultatif : Définir une branche (par défaut : main)
-$updateChecker->setBranch('master');
-
-
-
-
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+
+
+// Check if class allready exists
+if ( ! class_exists( 'Puc_v4_Factory' ) ) {
+    require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
+}
+
+// Init plugin update checker
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+    'https://grow-online.be/plugins/image-helper.json',
+    __FILE__,
+    'wordpress-image-renderer'
+);
+
 
 // Main function to render images
 function render_custom_image($args = []) {
