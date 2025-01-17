@@ -10,6 +10,15 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+
+// Check if class allready exists
+if ( ! class_exists( 'PucFactory' ) ) {
+    require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
+}
+
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+
 // Check if required plugins are activated 
 if ( ! class_exists( 'Timber' ) ) {
     add_action( 'admin_notices', function() {
@@ -24,14 +33,6 @@ if ( ! class_exists( 'ACF' ) ) {
     });
     return;
 }
-
-// Check if class allready exists
-if ( ! class_exists( 'PucFactory' ) ) {
-    require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
-}
-
-use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
-
 
 // Init plugin update checker
 $myUpdateChecker = PucFactory::buildUpdateChecker(
