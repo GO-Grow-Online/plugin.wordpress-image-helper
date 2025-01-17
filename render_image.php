@@ -36,7 +36,7 @@ if ( ! class_exists( 'ACF' ) ) {
 
 // Init plugin update checker
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/blob/8f33809516502b7fcfb4ed96474a68d4158aed82/plugin-version.json',
+    'https://grow-online.be/plugins/image-helper.json',
     __FILE__,
     'wordpress-image-renderer'
 );
