@@ -15,7 +15,7 @@ require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://raw.githubusercontent.com/GO-Grow-Online/plugin.wordpress-image-helper/8f33809516502b7fcfb4ed96474a68d4158aed82/plugin-version.json',
+    'https://raw.githubusercontent.com/GO-Grow-Online/plugin.wordpress-image-helper/refs/heads/master/plugin-version.json',
     __FILE__,
     'wordpress-image-renderer'
 );
