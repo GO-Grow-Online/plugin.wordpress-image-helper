@@ -10,13 +10,15 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-
-// Check if class allready exists
-if ( ! class_exists( 'PucFactory' ) ) {
-    require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
-}
-
+// Load update checker
+require 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$myUpdateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/blob/8f33809516502b7fcfb4ed96474a68d4158aed82/plugin-version.json',
+    __FILE__,
+    'wordpress-image-renderer'
+);
 
 
 // Check if required plugins are activated 
@@ -33,13 +35,6 @@ if ( ! class_exists( 'ACF' ) ) {
     });
     return;
 }
-
-// Init plugin update checker
-$myUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://grow-online.be/plugins/image-helper.json',
-    __FILE__,
-    'wordpress-image-renderer'
-);
 
 
 // Main function to render images
