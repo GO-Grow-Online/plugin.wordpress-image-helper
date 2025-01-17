@@ -28,8 +28,9 @@ if ( ! class_exists( 'ACF' ) ) {
 // Check if class allready exists
 if ( ! class_exists( 'PucFactory' ) ) {
     require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
-    use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 }
+
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 
 // Init plugin update checker
