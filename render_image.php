@@ -10,6 +10,20 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+// Check if required plugins are activated 
+if ( ! class_exists( 'Timber' ) ) {
+    add_action( 'admin_notices', function() {
+        echo '<div class="error"><p>Le plugin Timber est requis pour que ce plugin fonctionne correctement. Veuillez l’installer et l’activer.</p></div>';
+    });
+    return;
+}
+
+if ( ! class_exists( 'ACF' ) ) {
+    add_action( 'admin_notices', function() {
+        echo '<div class="error"><p>Le plugin Advanced Custom Fields (ACF) est requis pour que ce plugin fonctionne correctement. Veuillez l’installer et l’activer.</p></div>';
+    });
+    return;
+}
 
 // Check if class allready exists
 if ( ! class_exists( 'Puc_v4_Factory' ) ) {
