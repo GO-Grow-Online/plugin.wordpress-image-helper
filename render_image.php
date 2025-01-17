@@ -26,12 +26,14 @@ if ( ! class_exists( 'ACF' ) ) {
 }
 
 // Check if class allready exists
-if ( ! class_exists( 'Puc_v4_Factory' ) ) {
+if ( ! class_exists( 'PucFactory' ) ) {
     require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
+    use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 }
 
+
 // Init plugin update checker
-$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+$myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://grow-online.be/plugins/image-helper.json',
     __FILE__,
     'wordpress-image-renderer'
