@@ -6,7 +6,7 @@
  * Author: Grow Online
  */
 
- echo "render_image.php";
+echo "render_image.php";
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -169,3 +169,11 @@ function get_image_placeholder() {
 }
 
 // Example usage: echo render_custom_image(['img' => $image_array]);
+
+// Add function to timber
+add_filter('timber/context', function ($context) {
+    $context['render_custom_image'] = function ($args = []) {
+        return render_custom_image($args);
+    };
+    return $context;
+});
