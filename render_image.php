@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Wordpress Image Renderer
  * Description: A plugin to render images based on a Twig-like template logic.
- * Version: 1.0.15
+ * Version: 1.0.16
  * Author: Grow Online
  */
 
