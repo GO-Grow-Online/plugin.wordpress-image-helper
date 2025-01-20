@@ -24,25 +24,24 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 
 
 // Hook pour checker Timber & ACF après chargement des plugins
-add_action('plugins_loaded', 'mon_plugin_init');
-function mon_plugin_init() {
-
-    // Vérifier Timber
-    if ( ! class_exists('Timber\Timber') ) {
-        add_action('admin_notices', function() {
-            echo '<div class="error"><p>Le plugin Timber est requis...</p></div>';
-        });
-        return;
-    }
-
-    // Vérifier ACF
-    if ( ! class_exists('acf_add_local_field_group') ) {
-        add_action('admin_notices', function() {
-            echo '<div class="error"><p>Le plugin ACF est requis...</p></div>';
-        });
-        return;
-    }
-}
+// add_action('plugins_loaded', 'mon_plugin_init');
+// function mon_plugin_init() {
+//     // Vérifier ACF
+//     if ( ! class_exists('acf_add_local_field_group') ) {
+//         add_action('admin_notices', function() {
+//             echo '<div class="error"><p>Le plugin ACF est requis...</p></div>';
+//         });
+//         return;
+//     }
+// 
+//     // Vérifier Timber
+//     if ( ! class_exists('Timber\Timber') ) {
+//         add_action('admin_notices', function() {
+//             echo '<div class="error"><p>Le plugin Timber est requis...</p></div>';
+//         });
+//         return;
+//     }
+// }
 
 
 // Main function to render images
