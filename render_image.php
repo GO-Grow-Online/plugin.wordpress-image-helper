@@ -23,19 +23,25 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 );
 
 
-// Check if required plugins are activated 
-if ( ! class_exists( 'Timber' ) ) {
-    add_action( 'admin_notices', function() {
-        echo '<div class="error"><p>Le plugin Timber est requis pour que ce plugin fonctionne correctement. Veuillez l’installer et l’activer.</p></div>';
-    });
-    return;
-}
+// Hook pour checker Timber & ACF après chargement des plugins
+add_action('plugins_loaded', 'mon_plugin_init');
+function mon_plugin_init() {
 
-if ( ! class_exists( 'ACF' ) ) {
-    add_action( 'admin_notices', function() {
-        echo '<div class="error"><p>Le plugin Advanced Custom Fields (ACF) est requis pour que ce plugin fonctionne correctement. Veuillez l’installer et l’activer.</p></div>';
-    });
-    return;
+    // Vérifier Timber
+    if ( ! class_exists('Timber') ) {
+        add_action('admin_notices', function() {
+            echo '<div class="error"><p>Le plugin Timber est requis...</p></div>';
+        });
+        return;
+    }
+
+    // Vérifier ACF
+    if ( ! class_exists('ACF') ) {
+        add_action('admin_notices', function() {
+            echo '<div class="error"><p>Le plugin ACF est requis...</p></div>';
+        });
+        return;
+    }
 }
 
 
