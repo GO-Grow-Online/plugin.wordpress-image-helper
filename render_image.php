@@ -60,7 +60,6 @@ function render_image($args = []) {
     $is_seamless = $args['is_seamless'] ?: get_field('seamless', $img['id']);
     $is_svg = $mime_type == 'image/svg+xml';
     
-    var_dump($img);
     ?>
 
     <div class="imgWrap<?php 
