@@ -109,7 +109,7 @@ function render_image($args = []) {
                 if (!$is_svg) { // Has image format but is not svg
                     printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_attr($mime_type), esc_url($img['sizes'][$args['image_format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 } else { // Is SVG
-                    printf('<img loading="%s" type="image/svg+xml" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_attr($mime_type), esc_url($img['sizes'][$args['image_format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 }
             }
             ?>
