@@ -116,10 +116,11 @@ function render_image($args = []) {
             <?php 
             // Render figcaption 
             if ($figcaption) :
+
                     if (!empty($img['caption'])) { echo '<figcaption>' . esc_html($img['caption']) . '</figcaption>'; }
-                    if (!empty($img['url'])) { echo '<meta itemprop="url">' . esc_html($img['url']) . '</meta>'; }
-                    if (!empty($img['description'])) { echo '<meta itemprop="description">' . esc_html($img['description']) . '</meta>'; }
-                    if (!empty($img['name'])) { echo '<meta itemprop="name">' . esc_html($img['name']) . '</meta>'; } ?>
+                    if (!empty($img['url'])) { echo '<meta itemprop="url" content="' . esc_html($img['url']) . '"/>'; }
+                    if (!empty($img['description'])) { echo '<meta itemprop="description" content="' . esc_html($img['description']) . '"/>'; }
+                    if (!empty($img['name'])) { echo '<meta itemprop="name" content="' . esc_html($img['name']) . '"/>'; } ?>
                 </figure>
             <?php endif; ?>
 
