@@ -46,6 +46,26 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 
 // Main function to render images
 function render_custom_image($args = []) {
+
+    if ( $args['img'] instanceof \Timber\Image ) {
+        $timber_image = $args['img'];
+        
+        $args['img'] = [
+            'id'    => $timber_image->ID,
+            'alt'   => $timber_image->alt(),
+            'title' => $timber_image->title,
+            'src'   => [
+                'thumbnail' => $timber_image->src('thumbnail'),
+                'medium'    => $timber_image->src('medium'),
+                'large'     => $timber_image->src('large'),
+            ],
+            'caption'        => $timber_image->post_excerpt,
+            'description'    => $timber_image->post_content,
+            'url'            => $timber_image->guid,
+            'post_mime_type' => get_post_mime_type($timber_image->ID),
+        ];
+    }
+
     $defaults = [
         'img' => null,
         'eager_loading' => null,
