@@ -2,11 +2,9 @@
 /**
  * Plugin Name: Wordpress Image Renderer
  * Description: A plugin to render images based on a Twig-like template logic.
- * Version: 1.0.16
+ * Version: 1.1
  * Author: Grow Online
  */
-
-echo "render_image.php";
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -19,53 +17,12 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 $myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://raw.githubusercontent.com/GO-Grow-Online/plugin.wordpress-image-helper/refs/heads/master/image-helper-version.json',
     __FILE__,
-    'wordpress-image-renderer'
+    'wordpress-image-helper'
 );
 
 
-// Hook pour checker Timber & ACF après chargement des plugins
-// add_action('plugins_loaded', 'mon_plugin_init');
-// function mon_plugin_init() {
-//     // Vérifier ACF
-//     if ( ! class_exists('acf_add_local_field_group') ) {
-//         add_action('admin_notices', function() {
-//             echo '<div class="error"><p>Le plugin ACF est requis...</p></div>';
-//         });
-//         return;
-//     }
-// 
-//     // Vérifier Timber
-//     if ( ! class_exists('Timber\Timber') ) {
-//         add_action('admin_notices', function() {
-//             echo '<div class="error"><p>Le plugin Timber est requis...</p></div>';
-//         });
-//         return;
-//     }
-// }
-
-
 // Main function to render images
-function render_custom_image($args = []) {
-
-    if ( $args['img'] instanceof \Timber\Image ) {
-        $timber_image = $args['img'];
-        
-        $args['img'] = [
-            'id'    => $timber_image->ID,
-            'alt'   => $timber_image->alt(),
-            'title' => $timber_image->title,
-            'src'   => [
-                'thumbnail' => $timber_image->src('thumbnail'),
-                'medium'    => $timber_image->src('medium'),
-                'large'     => $timber_image->src('large'),
-            ],
-            'caption'        => $timber_image->post_excerpt,
-            'description'    => $timber_image->post_content,
-            'url'            => $timber_image->guid,
-            'post_mime_type' => get_post_mime_type($timber_image->ID),
-        ];
-    }
-
+function render_image($args = []) {
     $defaults = [
         'img' => null,
         'eager_loading' => null,
@@ -74,46 +31,96 @@ function render_custom_image($args = []) {
         'is_seamless' => null,
         'is_fs' => false
     ];
-
+    
     $args = wp_parse_args($args, $defaults);
-
+    
     // Validate 'img' argument
-    if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['src']))) {
-        trigger_error('Invalid image format provided. Expected an array with a "src" key.', E_USER_WARNING);
+    if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['url']))) {
+        trigger_error('Invalid image format provided. Expected an array with a "url" key.', E_USER_WARNING);
         $args['img'] = null;
     }
 
-    $img = $args['img'] ?: get_image_placeholder();
+    // If image is empty get placeholder
+    $img = $args['img'] ?: [
+        'src' => get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg',
+        'alt' => __('Image non disponible', 'Non-editable strings'),
+        'id' => null,
+        'caption' => '',
+        'mime_type' => 'image/svg+xml'
+    ];
+
     $loading_type = $args['eager_loading'] ? 'eager' : 'lazy';
-    $mime_type = $img['post_mime_type'] ?? '';
+    $mime_type = $img['mime_type'] ?? '';
 
     $figcaption = !empty($args['figcaption']) ? $args['figcaption'] : false;
     $force_portrait = get_field('force_portrait', $img['id']) ?: false;
     $display_legend = get_field('display_legend', $img['id']) ?: false;
     $is_seamless = $args['is_seamless'] ?: get_field('seamless', $img['id']);
-
-    return render_image_wrap($img, $loading_type, $mime_type, $figcaption, $force_portrait, $display_legend, $is_seamless, $args);
-}
-
-// Function to render the image wrapper
-function render_image_wrap($img, $loading_type, $mime_type, $figcaption, $force_portrait, $display_legend, $is_seamless, $args) {
-    ob_start();
+    $is_svg = $mime_type == 'image/svg+xml';
     ?>
+
     <div class="imgWrap<?php 
         echo $force_portrait ? ' imgWrap--portrait' : ''; 
         echo $is_seamless ? ' imgWrap--seamless' : ''; 
         echo $display_legend ? ' imgWrap--displayLegend' : ''; 
-    ?>">
+        ?>">
+
         <?php if ($img) : ?>
-            <?php echo render_portrait_background($img, $force_portrait, $mime_type, $loading_type); ?>
+            <?php 
+            // Render blured bg image in "force_portrait" mode
+            if ($force_portrait && !$is_svg) { 
+                echo '<!--googleoff: index--><img class="imgWrap--portrait-bg" loading="'. esc_attr($loading_type) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
+            ?>
+            
             <?php if ($figcaption) : ?>
                 <figure itemscope itemtype="http://schema.org/ImageObject">
             <?php endif; ?>
 
-            <?php echo render_image_content($img, $args, $mime_type, $loading_type); ?>
+            <?php 
+            // Render picture content if no image format is set, and if file is svg only with tab or mob files assigned
+            $no_img_format = !$args['image_format'];
 
-            <?php if ($figcaption) : ?>
-                <?php echo render_figcaption($img); ?>
+            if ($no_img_format && !$is_svg) {
+                $mob = get_field('mob_img', $img['id']);
+                $tab = get_field('tab_img', $img['id']);
+                $thumbnail = $mob ? $mob['sizes']['thumbnail'] : $img['sizes']['thumbnail'];
+                $medium = $tab ? $tab['sizes']['medium'] : $img['sizes']['medium'];
+                ?>
+                <picture>
+                    <source media="(max-width: 500px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($thumbnail); ?>">
+                    <source media="(max-width: 1023px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($medium); ?>">
+
+                    <?php if ($args['is_fs']) : ?>
+                        <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['large']); ?>">
+                    <?php elseif ($img['sizes']['medium'] !== $medium) : ?>
+                        <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['medium']); ?>">
+                    <?php endif; ?>
+
+                    <img loading="<?php echo esc_attr($loading_type); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
+
+                </picture>
+                <?php
+            } else {
+                
+                if (!$is_svg) { // Has image format but is not svg
+                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_attr($mime_type), esc_url($img['sizes'][$args['image_format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                } else { // Is SVG
+                    printf('<img loading="%s" type="image/svg+xml" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                }
+            }
+            ?>
+
+            <?php 
+            // Render figcaption 
+            if ($figcaption) :
+
+                    if (!empty($img['caption'])) {
+                        echo '<figcaption>' . esc_html($img['caption']) . '</figcaption>';
+                    } ?>
+
+                    <meta itemprop="url" content="<?php echo esc_url($img['url']); ?>">
+                    <meta itemprop="description" content="<?php echo esc_attr($img['description']); ?>">
+                    <meta itemprop="name" content="<?php echo esc_attr($img['name']); ?>">
                 </figure>
             <?php endif; ?>
 
@@ -121,84 +128,6 @@ function render_image_wrap($img, $loading_type, $mime_type, $figcaption, $force_
             <img width="500" height="500" src="<?php echo esc_url(get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg'); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
         <?php endif; ?>
     </div>
+
     <?php
-    return ob_get_clean();
 }
-
-// Function to render the portrait background
-function render_portrait_background($img, $force_portrait, $mime_type, $loading_type) {
-    if ($force_portrait && $mime_type !== 'image/svg+xml') {
-        return sprintf(
-            '<!--googleoff: index--><img class="imgWrap--portrait-bg" loading="%s" type="image/webp" src="%s" alt="%s"><!--googleon: index-->',
-            esc_attr($loading_type),
-            esc_url($img['src']['thumbnail']),
-            esc_attr($img['alt'])
-        );
-    }
-    return '';
-}
-
-// Function to render the image content
-function render_image_content($img, $args, $mime_type, $loading_type) {
-    ob_start();
-    if (!$args['image_format'] && $mime_type !== 'image/svg+xml') {
-        $mob = get_field('mob_img', $img['id']);
-        $tab = get_field('tab_img', $img['id']);
-        $thumbnail = $mob ? get_image($mob)['src']['thumbnail'] : $img['src']['thumbnail'];
-        $medium = $tab ? get_image($tab)['src']['medium'] : $img['src']['medium'];
-        ?>
-        <picture>
-            <source media="(max-width: 500px)" type="image/webp" srcset="<?php echo esc_url($thumbnail); ?>">
-            <source media="(max-width: 1023px)" type="image/webp" srcset="<?php echo esc_url($medium); ?>">
-            <?php if ($args['is_fs']) : ?>
-                <source media="(min-width: 1024px)" type="image/webp" srcset="<?php echo esc_url($img['src']['large']); ?>">
-            <?php elseif ($img['src']['medium'] !== $medium) : ?>
-                <source media="(min-width: 1024px)" type="image/webp" srcset="<?php echo esc_url($img['src']['medium']); ?>">
-            <?php endif; ?>
-            <img loading="<?php echo esc_attr($loading_type); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
-        </picture>
-        <?php
-    } else {
-        if ($mime_type !== 'image/svg+xml') {
-            printf('<img loading="%s" type="image/webp" src="%s" alt="%s">', esc_attr($loading_type), esc_url($img['src'][$args['image_format']]), esc_attr($img['alt']));
-        } else {
-            printf('<img loading="%s" type="image/svg+xml" src="%s" alt="%s">', esc_attr($loading_type), esc_url($img['src']), esc_attr($img['alt']));
-        }
-    }
-    return ob_get_clean();
-}
-
-// Function to render the figcaption
-function render_figcaption($img) {
-    ob_start();
-    if (!empty($img['caption'])) {
-        echo '<figcaption>' . esc_html($img['caption']) . '</figcaption>';
-    }
-    ?>
-    <meta itemprop="url" content="<?php echo esc_url($img['url']); ?>">
-    <meta itemprop="description" content="<?php echo esc_attr($img['description']); ?>">
-    <meta itemprop="name" content="<?php echo esc_attr($img['title']); ?>">
-    <?php
-    return ob_get_clean();
-}
-
-// Placeholder function for fallback image
-function get_image_placeholder() {
-    return [
-        'src' => get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg',
-        'alt' => __('Image non disponible', 'text-domain'),
-        'id' => null,
-        'caption' => '',
-        'post_mime_type' => 'image/svg+xml'
-    ];
-}
-
-// Example usage: echo render_custom_image(['img' => $image_array]);
-
-// Add function to timber
-add_filter('timber/context', function ($context) {
-    $context['render_custom_image'] = function ($args = []) {
-        return render_custom_image($args);
-    };
-    return $context;
-});
