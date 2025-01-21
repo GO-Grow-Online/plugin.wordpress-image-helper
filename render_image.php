@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: GO - image renderer
+ * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
  * Version: 1.1
  * Author: Grow Online
@@ -42,11 +42,13 @@ function render_image($args = []) {
 
     // If image is empty get placeholder
     $img = $args['img'] ?: [
-        'src' => get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg',
+        'url' => get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg',
         'alt' => __('Image non disponible', 'Non-editable strings'),
         'id' => null,
         'caption' => '',
-        'mime_type' => 'image/svg+xml'
+        'mime_type' => 'image/svg+xml',
+        'width' => 500,
+        'height' => 500
     ];
 
     $loading_type = $args['eager_loading'] ? 'eager' : 'lazy';
@@ -57,6 +59,8 @@ function render_image($args = []) {
     $display_legend = get_field('display_legend', $img['id']) ?: false;
     $is_seamless = $args['is_seamless'] ?: get_field('seamless', $img['id']);
     $is_svg = $mime_type == 'image/svg+xml';
+    
+    var_dump($img);
     ?>
 
     <div class="imgWrap<?php 
