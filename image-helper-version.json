@@ -1,21 +1,21 @@
 {
-	"name": "Wordpress Image Renderer",
+	"name": "GO - image renderer",
 	"version": "1.1", 
 	"download_url": "https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/archive/refs/heads/master.zip",
 
 	"homepage": "https://grow-online.be/",
 	"requires": "4.5", 
 	"tested": "4.8",
-	"last_updated": "2025-01-11 12:22:00",
-	"upgrade_notice": "Here's why you should upgrade...",
+	"last_updated": "2025-01-21 16:00:00",
+	"upgrade_notice": "You should upgrade because you just should.",
 
 	"author": "Grow Online",
 	"author_homepage": "https://grow-online.be/",
 
 	"sections": {
-		"description": "(Required) Plugin description. Basic HTML can be used in all sections.",
-		"installation": "(Recommended) Installation instructions.",
-		"changelog": "(Recommended) Changelog. <p>This section will be displayed by default when the user clicks 'View version x.y.z details'.</p>",
+		"description": "Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. ",
+		"installation": "Download and install the archive in your Wordpress site. Use render_image() function to display lightweight and responsive images. An easy way to gain accessibility and performances.",
+		"changelog": "Version 1.1 brings stability to the plugin.",
 		"custom_section": "This is a custom section labeled 'Custom Section'."
 	},
 	
@@ -29,20 +29,7 @@
 		"high": "http://w-shadow.com/files/external-update-example/assets/banner-1544x500.png"
 	},
 
-	"translations": [
-		{
-			"language": "fr_FR",
-			"version": "4.0",
-			"updated": "2016-04-22 23:22:42",
-			"package": "http://example.com/updates/translations/french-language-pack.zip"
-		},
-		{
-			"language": "de_DE",
-			"version": "5.0",
-			"updated": "2016-04-22 23:22:42",
-			"package": "http://example.com/updates/translations/german-language-pack.zip"
-		}
-	],
+	"translations": [],
 
 	"rating": 90,
 	"num_ratings": 123,

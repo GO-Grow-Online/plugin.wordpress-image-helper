@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Wordpress Image Renderer
- * Description: A plugin to render images based on a Twig-like template logic.
+ * Plugin Name: GO - image renderer
+ * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
  * Version: 1.1
  * Author: Grow Online
  */
@@ -18,7 +18,7 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
     'https://raw.githubusercontent.com/GO-Grow-Online/plugin.wordpress-image-helper/refs/heads/master/image-helper-version.json',
     __FILE__,
     'wordpress-image-helper'
-);
+);  
 
 
 // Main function to render images
