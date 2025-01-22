@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.2
+ * Version: 1.3
  * Author: Grow Online
  */
 
@@ -31,13 +31,14 @@ function render_image($args = []) {
         'is_seamless' => null,
         'is_fs' => false
     ];
+
+    $args['img'] = $args['img'] ? $args['img'] : get_field('img_placeholder', 'options');
     
     $args = wp_parse_args($args, $defaults);
     
     // Validate 'img' argument
     if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['url']))) {
         trigger_error('Invalid image format provided. Expected an array with a "url" key.', E_USER_WARNING);
-        $args['img'] = null;
     }
 
     // If image is empty get placeholder
