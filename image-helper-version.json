@@ -1,13 +1,13 @@
 {
 	"name": "GO - Image Renderer",
-	"version": "1.3", 
+	"version": "1.3.1", 
 	"download_url": "https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/archive/refs/heads/master.zip",
 
 	"homepage": "https://grow-online.be/",
 	"requires": "4.5", 
 	"tested": "4.8",
 	"last_updated": "2025-01-21 16:00:00",
-	"upgrade_notice": "Fixed : placeholder image in option page was not used as fallback.",
+	"upgrade_notice": "Fixed : added sizes attributes for <img/> in <picture> element.",
 
 	"author": "Grow Online",
 	"author_homepage": "https://grow-online.be/",
