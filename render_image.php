@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.4
+ * Version: 1.4.1
  * Author: Grow Online
  */
 
@@ -94,8 +94,8 @@ function render_image($args = []) {
                 $medium = $tab ? $tab['sizes']['medium'] : $img['sizes']['medium'];
 
                 // Width & Height attr
-                $w = $args['is_fs'] ? $tab['sizes']['large-width'] : $tab['sizes']['medium-width'];
-                $h = $args['is_fs'] ? $tab['sizes']['large-height'] : $tab['sizes']['medium-height'];
+                $w = $img['width'] ? $img['width'] : 650;
+                $h = $img['height'] ? $img['height'] : 650;
                 ?>
                 <picture>
                     <source media="(max-width: 500px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($thumbnail); ?>">
