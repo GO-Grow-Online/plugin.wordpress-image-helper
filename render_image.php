@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.3.1
+ * Version: 1.4
  * Author: Grow Online
  */
 
@@ -20,6 +20,7 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
     'wordpress-image-helper'
 );  
 
+require_once __DIR__ . '/wp_medias_settings.php';
 
 // Main function to render images
 function render_image($args = []) {
@@ -29,16 +30,16 @@ function render_image($args = []) {
         'image_format' => null,
         'figcaption' => '',
         'is_seamless' => null,
-        'is_fs' => false
+        'is_fs' => false,
+        'use_webp' => true
     ];
-
-    $args['img'] = $args['img'] ? $args['img'] : get_field('img_placeholder', 'options');
     
     $args = wp_parse_args($args, $defaults);
     
     // Validate 'img' argument
     if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['url']))) {
         trigger_error('Invalid image format provided. Expected an array with a "url" key.', E_USER_WARNING);
+        $args['img'] = null;
     }
 
     // If image is empty get placeholder
@@ -52,6 +53,8 @@ function render_image($args = []) {
         'height' => 500
     ];
 
+
+
     $loading_type = $args['eager_loading'] ? 'eager' : 'lazy';
     $mime_type = $img['mime_type'] ?? '';
 
@@ -60,8 +63,8 @@ function render_image($args = []) {
     $display_legend = get_field('display_legend', $img['id']) ?: false;
     $is_seamless = $args['is_seamless'] ?: get_field('seamless', $img['id']);
     $is_svg = $mime_type == 'image/svg+xml';
-    
-    ?>
+
+?>
 
     <div class="imgWrap<?php 
         echo $force_portrait ? ' imgWrap--portrait' : ''; 
@@ -121,7 +124,6 @@ function render_image($args = []) {
             <?php 
             // Render figcaption 
             if ($figcaption) :
-
                     if (!empty($img['caption'])) { echo '<figcaption>' . esc_html($img['caption']) . '</figcaption>'; }
                     if (!empty($img['url'])) { echo '<meta itemprop="url" content="' . esc_html($img['url']) . '"/>'; }
                     if (!empty($img['description'])) { echo '<meta itemprop="description" content="' . esc_html($img['description']) . '"/>'; }
@@ -130,9 +132,12 @@ function render_image($args = []) {
             <?php endif; ?>
 
         <?php else : ?>
-            <img width="500" height="500" src="<?php echo esc_url(get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg'); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
+            <img width="650" height="650" src="<?php echo esc_url(get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg'); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
         <?php endif; ?>
     </div>
 
     <?php
+
+    if ( ! class_exists( 'Timber' ) ) {
+    }
 }
