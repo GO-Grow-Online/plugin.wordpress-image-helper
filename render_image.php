@@ -89,6 +89,10 @@ function render_image($args = []) {
                 $tab = get_field('tab_img', $img['id']);
                 $thumbnail = $mob ? $mob['sizes']['thumbnail'] : $img['sizes']['thumbnail'];
                 $medium = $tab ? $tab['sizes']['medium'] : $img['sizes']['medium'];
+
+                // Width & Height attr
+                $w = $args['is_fs'] ? $tab['sizes']['large-width'] : $tab['sizes']['medium-width'];
+                $h = $args['is_fs'] ? $tab['sizes']['large-height'] : $tab['sizes']['medium-height'];
                 ?>
                 <picture>
                     <source media="(max-width: 500px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($thumbnail); ?>">
@@ -100,7 +104,7 @@ function render_image($args = []) {
                         <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['medium']); ?>">
                     <?php endif; ?>
 
-                    <img loading="<?php echo esc_attr($loading_type); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
+                    <img width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading_type); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
 
                 </picture>
                 <?php
