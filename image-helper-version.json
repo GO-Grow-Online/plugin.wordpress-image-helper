@@ -15,7 +15,7 @@
 	"sections": {
 		"description": "Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. ",
 		"installation": "Download and install the archive in your Wordpress site. Use render_image() function to display lightweight and responsive images. An easy way to gain accessibility and performances.",
-		"changelog": "Version 1.1 brings stability to the plugin.",
+		"changelog": "",
 		"custom_section": "This is a custom section labeled 'Custom Section'."
 	},
 	
