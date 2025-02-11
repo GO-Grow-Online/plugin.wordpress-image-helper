@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Grow Online
  */
 
@@ -26,12 +26,11 @@ require_once __DIR__ . '/wp_medias_settings.php';
 function render_image($args = []) {
     $defaults = [
         'img' => null,
-        'eager_loading' => null,
+        'defer' => true,
         'image_format' => null,
         'figcaption' => '',
         'is_seamless' => null,
-        'is_fs' => false,
-        'use_webp' => true
+        'is_fs' => false
     ];
     
     $args = wp_parse_args($args, $defaults);
@@ -42,29 +41,20 @@ function render_image($args = []) {
         $args['img'] = null;
     }
 
-    // If image is empty get placeholder
-    $img = $args['img'] ?: [
-        'url' => get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg',
-        'alt' => __('Image non disponible', 'Non-editable strings'),
-        'id' => null,
-        'caption' => '',
-        'mime_type' => 'image/svg+xml',
-        'width' => 500,
-        'height' => 500
-    ];
+    // If image is empty get placeholder in "general" option page
+    $img = $args['img'] ?: get_field('img_placeholder', 'options');
 
-
-
-    $loading_type = $args['eager_loading'] ? 'eager' : 'lazy';
+    $loading = $args['defer'] ? "lazy" : "eager";
     $mime_type = $img['mime_type'] ?? '';
 
     $figcaption = !empty($args['figcaption']) ? $args['figcaption'] : false;
-    $force_portrait = get_field('force_portrait', $img['id']) ?: false;
-    $display_legend = get_field('display_legend', $img['id']) ?: false;
-    $is_seamless = $args['is_seamless'] ?: get_field('seamless', $img['id']);
     $is_svg = $mime_type == 'image/svg+xml';
-
-?>
+    
+    $force_portrait = !empty($img) ? get_field('force_portrait', $img['id']) : false;
+    $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
+    $is_seamless = !empty($img) && get_field('seamless', $img['id']) == true ? get_field('seamless', $img['id']) : $args['is_seamless'];
+   
+    ?>
 
     <div class="imgWrap<?php 
         echo $force_portrait ? ' imgWrap--portrait' : ''; 
@@ -76,7 +66,7 @@ function render_image($args = []) {
             <?php 
             // Render blured bg image in "force_portrait" mode
             if ($force_portrait && !$is_svg) { 
-                echo '<!--googleoff: index--><img class="imgWrap--portrait-bg" loading="'. esc_attr($loading_type) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
+                echo '<!--googleoff: index--><img class="imgWrap--portrait-bg" loading="'. esc_attr($loading) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
             ?>
             
             <?php if ($figcaption) : ?>
@@ -107,16 +97,16 @@ function render_image($args = []) {
                         <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['medium']); ?>">
                     <?php endif; ?>
 
-                    <img width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading_type); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
+                    <img width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
 
                 </picture>
                 <?php
             } else {
                 
                 if (!$is_svg) { // Has image format but is not svg
-                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_attr($mime_type), esc_url($img['sizes'][$args['image_format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['sizes'][$args['image_format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 } else { // Is SVG
-                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading_type), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 }
             }
             ?>
