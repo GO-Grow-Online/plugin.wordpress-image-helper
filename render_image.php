@@ -74,7 +74,7 @@ function render_image($args = []) {
         <?php if ($img) : ?>
             <?php 
             // Render blured bg image in "force_portrait" mode
-            if ($force_portrait && !$is_svg) { 
+            if ($args['force_portrait'] && !$is_svg) { 
                 echo '<!--googleoff: index--><img class="imgWrap--portrait-bg" loading="'. esc_attr($loading) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
             ?>
             
