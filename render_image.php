@@ -32,6 +32,9 @@ function render_image($args = []) {
     $force_portrait = !empty($img) ? get_field('force_portrait', $img['id']) : false;
     $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
     $seamless = !empty($img) ? get_field('seamless', $img['id']) : false;
+    var_dump(get_field('force_portrait', $img['id']));
+    var_dump(get_field('display_legend', $img['id']));
+    var_dump(get_field('seamless', $img['id']));
 
     $defaults = [
         'img' => null,
