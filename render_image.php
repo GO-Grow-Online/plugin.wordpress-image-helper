@@ -33,9 +33,6 @@ function render_image($args = []) {
     $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
     $seamless = !empty($img) ? get_field('seamless', $img['id']) : false;
 
-    // If display legend is true, we need <figcaption> anyway
-    $figcaption = $display_legend;
-
     $defaults = [
         'img' => null,
         'image_format' => null,
@@ -46,7 +43,8 @@ function render_image($args = []) {
         'force_portrait' => $force_portrait,
         'display_legend' => $display_legend,
         
-        'figcaption' => false,
+        // If display legend is true, we need <figcaption> anyway
+        'figcaption' => $display_legend,
     ];
     
     // Combine both argument arrays - $args is primary
