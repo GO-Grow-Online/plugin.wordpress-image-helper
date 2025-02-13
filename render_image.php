@@ -51,7 +51,9 @@ function render_image($args = []) {
     $args = wp_parse_args($args, $defaults);
 
 
-    var_dump('<pre>'. $args.'</pre>');
+    var_dump('<pre>');
+    var_dump($args);
+    var_dump('</pre>');
     
     // Validate 'img' argument
     if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['url']))) {
