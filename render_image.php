@@ -25,6 +25,9 @@ require_once __DIR__ . '/wp_medias_settings.php';
 // Main function to render images
 function render_image($args = []) {
 
+    // If image is empty get placeholder in "general" option page
+    $img = $args['img'] ?: get_field('img_placeholder', 'options');
+
     // Classes parameters - Can be overwritten by WebMaster in $args
     // force_portrait   | create a blured bg image
     // display_legend   | allow to show or hide <caption> 
@@ -32,9 +35,6 @@ function render_image($args = []) {
     $force_portrait = !empty($img) ? get_field('force_portrait', $img['id']) : false;
     $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
     $seamless = !empty($img) ? get_field('seamless', $img['id']) : false;
-    var_dump(get_field('force_portrait', $img['id']));
-    var_dump(get_field('display_legend', $img['id']));
-    var_dump(get_field('seamless', $img['id']));
 
     $defaults = [
         'img' => null,
@@ -53,23 +53,14 @@ function render_image($args = []) {
     // Combine both argument arrays - $args is primary
     $args = wp_parse_args($args, $defaults);
 
-
-    var_dump('<pre>');
-    var_dump($args);
-    var_dump('</pre>');
-    
     // Validate 'img' argument
     if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['url']))) {
         trigger_error('Invalid image format provided. Expected an array with a "url" key.', E_USER_WARNING);
         $args['img'] = null;
     }
 
-    // If image is empty get placeholder in "general" option page
-    $img = $args['img'] ?: get_field('img_placeholder', 'options');
-
     $loading = $args['defer'] ? "lazy" : "eager";
     $mime_type = $img['mime_type'] ?? '';
-
     $is_svg = $mime_type == 'image/svg+xml';
        
     ?>
