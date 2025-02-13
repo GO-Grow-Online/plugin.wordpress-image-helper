@@ -24,15 +24,29 @@ require_once __DIR__ . '/wp_medias_settings.php';
 
 // Main function to render images
 function render_image($args = []) {
+
+    // Classes parameters - Can be overwritten by WebMaster in $args
+    // force_portrait   | create a blured bg image
+    // display_legend   | allow to show or hide <caption> 
+    // seamless         | add a class deleting default styles
+    $force_portrait = !empty($img) ? get_field('force_portrait', $img['id']) : false;
+    $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
+    $seamless = !empty($img) ? get_field('seamless', $img['id']) : false;
+
     $defaults = [
         'img' => null,
-        'defer' => true,
         'image_format' => null,
-        'figcaption' => '',
-        'is_seamless' => null,
-        'is_fs' => false
+        'fs' => false,
+        'defer' => true,
+
+        'seamless' => $seamless,
+        'display_legend' => $display_legend,
+        'force_portrait' => $force_portrait,
+        
+        'figcaption' => false
     ];
     
+    // Combine both argument arrays - $args is primary
     $args = wp_parse_args($args, $defaults);
     
     // Validate 'img' argument
@@ -47,18 +61,13 @@ function render_image($args = []) {
     $loading = $args['defer'] ? "lazy" : "eager";
     $mime_type = $img['mime_type'] ?? '';
 
-    $figcaption = !empty($args['figcaption']) ? $args['figcaption'] : false;
     $is_svg = $mime_type == 'image/svg+xml';
-    
-    $force_portrait = !empty($img) ? get_field('force_portrait', $img['id']) : false;
-    $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
-    $is_seamless = !empty($img) && get_field('seamless', $img['id']) == true ? get_field('seamless', $img['id']) : $args['is_seamless'];
-   
+       
     ?>
 
     <div class="imgWrap<?php 
         echo $force_portrait ? ' imgWrap--portrait' : ''; 
-        echo $is_seamless ? ' imgWrap--seamless' : ''; 
+        echo $seamless ? ' imgWrap--seamless' : ''; 
         echo $display_legend ? ' imgWrap--displayLegend' : ''; 
         ?>">
 
@@ -69,7 +78,7 @@ function render_image($args = []) {
                 echo '<!--googleoff: index--><img class="imgWrap--portrait-bg" loading="'. esc_attr($loading) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
             ?>
             
-            <?php if ($figcaption) : ?>
+            <?php if ($args['figcaption']) : ?>
                 <figure itemscope itemtype="http://schema.org/ImageObject">
             <?php endif; ?>
 
@@ -91,7 +100,7 @@ function render_image($args = []) {
                     <source media="(max-width: 500px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($thumbnail); ?>">
                     <source media="(max-width: 1023px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($medium); ?>">
 
-                    <?php if ($args['is_fs']) : ?>
+                    <?php if ($args['fs']) : ?>
                         <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['large']); ?>">
                     <?php elseif ($img['sizes']['medium'] !== $medium) : ?>
                         <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['medium']); ?>">
@@ -113,7 +122,7 @@ function render_image($args = []) {
 
             <?php 
             // Render figcaption 
-            if ($figcaption) :
+            if ($args['figcaption']) :
                     if (!empty($img['caption'])) { echo '<figcaption>' . esc_html($img['caption']) . '</figcaption>'; }
                     if (!empty($img['url'])) { echo '<meta itemprop="url" content="' . esc_html($img['url']) . '"/>'; }
                     if (!empty($img['description'])) { echo '<meta itemprop="description" content="' . esc_html($img['description']) . '"/>'; }
