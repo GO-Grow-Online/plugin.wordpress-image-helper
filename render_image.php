@@ -49,6 +49,9 @@ function render_image($args = []) {
     
     // Combine both argument arrays - $args is primary
     $args = wp_parse_args($args, $defaults);
+
+
+    var_dump('<pre>'. $args.'</pre>');
     
     // Validate 'img' argument
     if ($args['img'] && (!is_array($args['img']) || !isset($args['img']['url']))) {
@@ -67,9 +70,9 @@ function render_image($args = []) {
     ?>
 
     <div class="imgWrap<?php 
-        echo $force_portrait ? ' imgWrap--portrait' : ''; 
-        echo $seamless ? ' imgWrap--seamless' : ''; 
-        echo $display_legend ? ' imgWrap--displayLegend' : ''; 
+        echo $args['force_portrait'] ? ' imgWrap--portrait' : ''; 
+        echo $args['seamless'] ? ' imgWrap--seamless' : ''; 
+        echo $args['display_legend'] ? ' imgWrap--displayLegend' : ''; 
         ?>">
 
         <?php if ($img) : ?>
