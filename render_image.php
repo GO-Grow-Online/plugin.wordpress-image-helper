@@ -44,7 +44,7 @@ function render_image($args = []) {
 
         'seamless' => $seamless,
         'force_portrait' => $force_portrait,
-        'display_legend' => $display_legend
+        'display_legend' => $display_legend,
         
         'figcaption' => false,
     ];
