@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.4.2
+ * Version: 1.4.3
  * Author: Grow Online
  */
 
