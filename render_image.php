@@ -20,7 +20,16 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
     'wordpress-image-helper'
 );  
 
+// Check if ACF is there
+if (!function_exists('acf_add_local_field_group')) {
+    add_action('admin_notices', function() {
+        echo '<div class="notice notice-error"><p><strong>Erreur :</strong> Le plugin <strong>ACF</strong> doit être activé pour que le plugin personnalisé fonctionne.</p></div>';
+    });
+    return;
+}
+
 require_once __DIR__ . '/wp_medias_settings.php';
+require_once __DIR__ . '/acf_fields_settings.php';
 
 // Main function to render images
 function render_image($args = []) {
@@ -136,7 +145,4 @@ function render_image($args = []) {
     </div>
 
     <?php
-
-    if ( ! class_exists( 'Timber' ) ) {
-    }
 }
