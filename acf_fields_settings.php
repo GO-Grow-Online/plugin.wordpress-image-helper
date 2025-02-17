@@ -1,10 +1,6 @@
 <?php
 
-var_dump('init render_image fields');
-
 if( function_exists('acf_add_local_field_group') ) {
-
-    var_dump('acf_add_local_field_group is active');
 
     acf_add_local_field_group(array(
         'key' => 'go-image-renderer-picture-fields',
