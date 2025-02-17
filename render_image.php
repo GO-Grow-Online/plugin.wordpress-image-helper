@@ -20,10 +20,10 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
     'wordpress-image-helper'
 );  
 
-// Check if ACF is there
+// Check if ACF in with us, otherwise plugin wont work
 if (!function_exists('acf_add_local_field_group')) {
     add_action('admin_notices', function() {
-        echo '<div class="notice notice-error"><p><strong>Erreur :</strong> Le plugin <strong>ACF</strong> doit être activé pour que le plugin personnalisé fonctionne.</p></div>';
+        echo '<div class="notice notice-error"><p><strong>Plugins manquants</strong> : Rendez-vous dans "thème", "Install Plguins". Installez et/ou activez ensuite les plugins affichés.</p></div>';
     });
     return;
 }

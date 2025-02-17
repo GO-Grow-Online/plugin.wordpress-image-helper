@@ -1,31 +1,28 @@
 <?php
 
 if( function_exists('acf_add_local_field_group') ) {
+
     acf_add_local_field_group(array(
-        'key' => 'group_64ca70a99efd0',
+        'key' => 'go-image-renderer-picture-fields',
         'title' => '<picture> element',
         'fields' => array(
             array(
-                'key' => 'field_64df45b43e4d6',
+                'key' => 'image_renderer_force_portrait_field',
                 'label' => 'Forcer l\'affichage en portrait',
                 'name' => 'force_portait',
                 'type' => 'true_false',
-                'instructions' => '',
-                'required' => 0,
                 'ui' => 1,
             ),
             array(
-                'key' => 'field_66d867834e049',
+                'key' => 'image_renderer_display_legend_field',
                 'label' => 'Afficher la légende quand c\'est possible',
                 'name' => 'display_legend',
                 'type' => 'true_false',
-                'instructions' => '',
-                'required' => 0,
                 'default_value' => 1,
                 'ui' => 1,
             ),
             array(
-                'key' => 'field_64ca70aa0e4f7',
+                'key' => 'image_renderer_mob_img',
                 'label' => 'Image mobile',
                 'name' => 'mob_img',
                 'type' => 'image',
@@ -35,13 +32,13 @@ if( function_exists('acf_add_local_field_group') ) {
                 'library' => 'all',
             ),
             array(
-                'key' => 'field_64ca74cb0e4f8',
+                'key' => 'image_renderer_tab_img',
                 'label' => 'Image tablette',
                 'name' => 'tab_img',
                 'type' => 'image',
                 'instructions' => "Cette image apparaîtra sur les tablettes.\nUtilisez ce champ à partir du moment où vous ne parvenez pas à avoir une image correctement cadrée sur les tablettes.",
                 'return_format' => 'array',
-                'preview_size' => 'medium',
+                'preview_size' => 'thumbnail',
                 'library' => 'all',
             ),
         ),
@@ -59,6 +56,7 @@ if( function_exists('acf_add_local_field_group') ) {
                 ),
             ),
         ),
+        
         'menu_order' => 0,
         'position' => 'normal',
         'style' => 'default',
