@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.4.3
+ * Version: 1.4.4
  * Author: Grow Online
  */
 
@@ -140,7 +140,7 @@ function render_image($args = []) {
             <?php endif; ?>
 
         <?php else : ?>
-            <img width="650" height="650" src="<?php echo esc_url(get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg'); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
+            <img width="650" height="650" loading="<?php echo esc_attr($loading) ?>" src="<?php echo esc_url(get_template_directory_uri() . '/assets/static/svg/image_placeholder.svg'); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
         <?php endif; ?>
     </div>
 
