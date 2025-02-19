@@ -27,18 +27,20 @@ add_action( 'init', 'remove_large_image_sizes' );
 if (!function_exists('get_svg')) {
     function get_svg( $media_file, $is_url = false ) {
         if ($is_url) {
-            $html = file_get_contents( $media_file );
-            return $html;
-        }else{
+            $svg = file_get_contents( $media_file );
+        } else {
             if ($media_file['mime_type'] === 'image/svg+xml') {
                 $file_path = get_attached_file( $media_file['ID'] );
-                $html = file_get_contents( $file_path );
-                return $html;
+                $svg = file_get_contents( $file_path );
+            } else {
+                return is_user_logged_in() ? '<p class="admin-msg">Invalid file type. Please upload an SVG.</p>' : '';
             }
         }
 
-        return is_user_logged_in() ? '<p class="admin-msg">Invalid file type. Please upload an SVG.</p>' : '';
-    }
+        // Remove scripts & styles
+        $svg = preg_replace('/<(script|style)[^>]*?>.*?<\/\1>/si', '', $svg);
+
+        return $svg;    }
 }
 
 
