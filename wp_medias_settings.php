@@ -25,16 +25,16 @@ add_action( 'init', 'remove_large_image_sizes' );
 
 // Display svg's code instead of an 'img' element
 if (!function_exists('get_svg')) {
-    function get_svg( $media_file, $is_url = true ) {
+    function get_svg( $media_file, $is_url = false ) {
         if ($is_url) {
+            $html = file_get_contents( $media_file );
+            return $html;
+        }else{
             if ($media_file['mime_type'] === 'image/svg+xml') {
                 $file_path = get_attached_file( $media_file['ID'] );
                 $html = file_get_contents( $file_path );
                 return $html;
             }
-        }else{
-            $html = file_get_contents( $media_file );
-            return $html;
         }
 
         return is_user_logged_in() ? '<p class="admin-msg">Invalid file type. Please upload an SVG.</p>' : '';
