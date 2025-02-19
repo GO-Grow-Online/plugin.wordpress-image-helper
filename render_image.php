@@ -2,7 +2,7 @@
 /**
  * Plugin Name: GO - Image Renderer
  * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
- * Version: 1.4.4
+ * Version: 1.4.5
  * Author: Grow Online
  */
 
@@ -47,7 +47,7 @@ function render_image($args = []) {
 
     $defaults = [
         'img' => null,
-        'image_format' => null,
+        'format' => null,
         'fs' => false,
         'defer' => true,
 
@@ -93,7 +93,7 @@ function render_image($args = []) {
 
             <?php 
             // Render picture content if no image format is set, and if file is svg only with tab or mob files assigned
-            $no_img_format = !$args['image_format'];
+            $no_img_format = !$args['format'];
 
             if ($no_img_format && !$is_svg) {
                 $mob = get_field('mob_img', $img['id']);
@@ -122,7 +122,7 @@ function render_image($args = []) {
             } else {
                 
                 if (!$is_svg) { // Has image format but is not svg
-                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['sizes'][$args['image_format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                    printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['sizes'][$args['format']]), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 } else { // Is SVG
                     printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 }
