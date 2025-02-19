@@ -26,7 +26,7 @@ if (!function_exists('acf_add_local_field_group')) {
         echo '<div class="notice notice-error"><p><strong>Plugins manquants</strong> : Rendez-vous dans "thème", "Install Plguins". Installez et/ou activez ensuite les plugins affichés.</p></div>';
     });
     return;
-}7
+}
 require_once __DIR__ . '/wp_medias_settings.php';
 require_once __DIR__ . '/acf_fields_settings.php';
 
