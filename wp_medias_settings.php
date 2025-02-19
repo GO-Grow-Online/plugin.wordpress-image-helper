@@ -13,8 +13,14 @@ if (!function_exists('remove_unwanted_image_sizes')) {
 }
 add_filter('intermediate_image_sizes_advanced', 'remove_unwanted_image_sizes');
 
-// Disactivate 1536x1536 & 2048x2048 - Since WP 5.3 these are automatically regenerated to handle big images such as retina
-add_filter( 'big_image_size_threshold', '__return_false' );
+
+// Disactivate 1536x1536 & 2048x2048 completely - Image sizes are still visible
+// Since WP 5.3 these are automatically regenerated to handle big images such as retina
+function remove_large_image_sizes() {
+	remove_image_size( '1536x1536' );  // 2 x Medium Large (1536 x 1536)
+	remove_image_size( '2048x2048' );  // 2 x Large (2048 x 2048)
+}
+add_action( 'init', 'remove_large_image_sizes' );
 
 // Display svg's code instead of an 'img' element
 if (!function_exists('get_svg')) {
