@@ -13,6 +13,9 @@ if (!function_exists('remove_unwanted_image_sizes')) {
 }
 add_filter('intermediate_image_sizes_advanced', 'remove_unwanted_image_sizes');
 
+// Disactivate 1536x1536 & 2048x2048 - Since WP 5.3 these are automatically regenerated to handle big images such as retina
+add_filter( 'big_image_size_threshold', '__return_false' );
+
 // Display svg's code instead of an 'img' element
 if (!function_exists('get_svg')) {
     function get_svg( $media_file, $is_url = true ) {
