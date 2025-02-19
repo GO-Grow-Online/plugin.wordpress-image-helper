@@ -22,6 +22,7 @@ function remove_large_image_sizes() {
 }
 add_action( 'init', 'remove_large_image_sizes' );
 
+
 // Display svg's code instead of an 'img' element
 if (!function_exists('get_svg')) {
     function get_svg( $media_file, $is_url = true ) {
