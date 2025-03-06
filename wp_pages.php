@@ -6,16 +6,14 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
     return $links;
 });
 
-// Ajouter la page "Configuration" sous "Réglages"
+
 add_action('admin_menu', function () {
-    add_menu_page(
-        'Configuration de Image Renderer',
-        'GO - Image Renderer',
+    add_options_page(
+        'Activation du Plugin',
+        'Licence Plugin',
         'manage_options',
         'go-image-renderer-license',
-        'go_image_renderer_license_page',
-        'dashicons-admin-generic', // Icône du menu
-        80 // Position dans le menu
+        'go_image_renderer_license_page'
     );
 });
 

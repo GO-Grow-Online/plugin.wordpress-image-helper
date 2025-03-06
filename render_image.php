@@ -32,6 +32,8 @@ require_once __DIR__ . '/wp_pages.php';
 require_once __DIR__ . '/wp_medias_settings.php';
 require_once __DIR__ . '/acf_fields_settings.php';
 
+
+
 // Main function to render images
 function render_image($args = []) {
 
