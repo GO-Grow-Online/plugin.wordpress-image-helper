@@ -1,14 +1,16 @@
 <?php
-var_dump(plugin_basename(__FILE__));
+// var_dump(plugin_basename(__FILE__));
+// --> pluginwordpress-image-helper-master/wp_pages.php
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-    $settings_link = '<a href="admin.php?page=go-image-renderer-license">' . __('Configuration') . '</a>';
-    array_unshift($links, $settings_link);
+    $settings_link = '<a href="' . esc_url(admin_url('admin.php?page=go-image-renderer-license')) . '">' . __('Configuration', 'text-domain') . '</a>';
+    array_unshift($links, $settings_link); // Ajoute le lien en premier
     return $links;
 });
 
 add_action('admin_menu', function () {
-    add_options_page(
+    add_submenu_page(
+        'plugins.php',
         'Activation du Plugin',
         'Licence Plugin',
         'manage_options',
@@ -16,6 +18,7 @@ add_action('admin_menu', function () {
         'go_image_renderer_license_page'
     );
 });
+
 
 // Affichage de la page "Configuration"
 function go_image_renderer_license_page() {
