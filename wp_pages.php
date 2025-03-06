@@ -1,10 +1,10 @@
 <?php
 // var_dump(plugin_basename(__FILE__));
-// --> pluginwordpress-image-helper-master/wp_pages.php
+// --> pluginwordpress-image-helper-master/render_image.php
 
-add_filter('plugin_action_links_pluginwordpress-image-helper-master', function ($links) {
+add_filter('plugin_action_links_pluginwordpress-image-helper-master/render_image.php', function ($links) {
     $settings_link = '<a href="' . esc_url(admin_url('admin.php?page=go-image-renderer-license')) . '">' . __('Configuration', 'text-domain') . '</a>';
-    array_unshift($links, $settings_link); // Ajoute le lien en premier
+    array_unshift($links, $settings_link);
     return $links;
 });
 
