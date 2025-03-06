@@ -32,17 +32,6 @@ require_once __DIR__ . '/wp_pages.php';
 require_once __DIR__ . '/wp_medias_settings.php';
 require_once __DIR__ . '/acf_fields_settings.php';
 
-add_action('admin_menu', function () {
-    add_options_page(
-        'Activation du Plugin',
-        'Licence Plugin',
-        'manage_options',
-        'plugin-license',
-        'mon_plugin_license_page'
-    );
-});
-
-
 // Main function to render images
 function render_image($args = []) {
 
