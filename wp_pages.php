@@ -1,11 +1,11 @@
 <?php
+var_dump(plugin_basename(__FILE__));
 
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
     $settings_link = '<a href="admin.php?page=go-image-renderer-license">' . __('Configuration') . '</a>';
-    array_unshift($links, $settings_link); // Ajoute le lien en premier
+    array_unshift($links, $settings_link);
     return $links;
 });
-
 
 add_action('admin_menu', function () {
     add_options_page(
