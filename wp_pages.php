@@ -11,7 +11,7 @@ add_filter('plugin_action_links_pluginwordpress-image-helper-master/render_image
 add_action('admin_menu', function () {
     add_submenu_page(
         'plugins.php',
-        'Activation du Plugin',
+        'Licence',
         'Licence Plugin',
         'manage_options',
         'go-image-renderer-license',
@@ -24,7 +24,7 @@ add_action('admin_menu', function () {
 function go_image_renderer_license_page() {
     ?>
     <div class="wrap">
-        <h1>Activation du Plugin</h1>
+        <h1>Licence - Image Renderer</h1>
         <form method="post" action="options.php">
             <?php
             settings_fields('go_image_renderer_licence_group');
