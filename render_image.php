@@ -27,6 +27,8 @@ if (!function_exists('acf_add_local_field_group')) {
     });
     return;
 }
+
+require_once __DIR__ . '/wp_pages.php';
 require_once __DIR__ . '/wp_medias_settings.php';
 require_once __DIR__ . '/acf_fields_settings.php';
 
@@ -39,52 +41,6 @@ add_action('admin_menu', function () {
         'mon_plugin_license_page'
     );
 });
-
-
-
-
-
-
-function mon_plugin_license_page() {
-    ?>
-    <div class="wrap">
-        <h2>Activation du Plugin</h2>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields('mon_plugin_licence_group');
-            do_settings_sections('plugin-license');
-            submit_button();
-            ?>
-        </form>
-    </div>
-    <?php
-}
-
-add_action('admin_init', function () {
-    register_setting('mon_plugin_licence_group', 'mon_plugin_license_key');
-
-    add_settings_section(
-        'mon_plugin_licence_section',
-        'Entrez votre clé de licence',
-        null,
-        'plugin-license'
-    );
-
-    add_settings_field(
-        'mon_plugin_license_key',
-        'Clé de licence',
-        function () {
-            $value = get_option('mon_plugin_license_key', '');
-            echo '<input type="text" name="mon_plugin_license_key" value="' . esc_attr($value) . '" class="regular-text">';
-        },
-        'plugin-license',
-        'mon_plugin_licence_section'
-    );
-});
-
-
-
-
 
 
 // Main function to render images
