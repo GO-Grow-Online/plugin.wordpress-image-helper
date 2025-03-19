@@ -28,7 +28,6 @@ if (!function_exists('acf_add_local_field_group')) {
     return;
 }
 
-require_once __DIR__ . '/wp_pages.php';
 require_once __DIR__ . '/wp_medias_settings.php';
 require_once __DIR__ . '/acf_fields_settings.php';
 require_once __DIR__ . '/admin/licence-check.php';
