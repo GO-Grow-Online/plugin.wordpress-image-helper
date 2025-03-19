@@ -1,5 +1,4 @@
 <?php
-
 // Ajoute un lien vers la page de licence dans les actions du plugin
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
     $settings_link = '<a href="' . esc_url(admin_url('admin.php?page=go-image-renderer-license')) . '">' . __('Configuration', 'text-domain') . '</a>';
