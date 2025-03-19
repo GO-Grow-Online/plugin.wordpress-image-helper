@@ -1,7 +1,7 @@
 <?php
 // Par exemple, lors de la sauvegarde des réglages du plugin où l'utilisateur fournit la clé :
 $license_key = sanitize_text_field( get_option('go_image_renderer_license_key') );  // ou valeur fournie par l'utilisateur
-$domain      = $_SERVER['SERVER_NAME'];  // ou home_url() pour obtenir le domaine du site
+$domain      = home_url();  // obtenir le domaine du site
 
 // Préparation de la requête vers le serveur de licence
 $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";  // URL de l'endpoint PHP sur le serveur Infomaniak
@@ -48,3 +48,82 @@ add_action('go_image_renderer_check_license', function () {
     update_option('go_image_renderer_license_status', $is_valid ? 'active' : 'inactive');
 });
 
+
+
+add_action('admin_footer', function () {
+    ?>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let inputField = document.querySelector('input[name="go_image_renderer_license_key"]');
+        let messageDiv = document.getElementById('license-validation-message');
+
+        if (inputField) {
+            inputField.addEventListener('blur', function() {
+                let licenseKey = inputField.value.trim();
+                if (licenseKey.length === 0) {
+                    messageDiv.innerHTML = "<p style='color: red;'>Veuillez entrer une clé de licence.</p>";
+                    return;
+                }
+
+                messageDiv.innerHTML = "<p style='color: blue;'>Vérification en cours...</p>";
+
+                fetch("<?php echo admin_url('admin-ajax.php'); ?>", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "action=check_license&license_key=" + encodeURIComponent(licenseKey) + "&nonce=<?php echo wp_create_nonce('check_license_nonce'); ?>"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        messageDiv.innerHTML = "<p style='color: green;'>✔ " + data.message + "</p>";
+                    } else {
+                        messageDiv.innerHTML = "<p style='color: red;'>❌ " + data.message + "</p>";
+                    }
+                })
+                .catch(error => {
+                    messageDiv.innerHTML = "<p style='color: red;'>Erreur lors de la vérification.</p>";
+                    console.error(error);
+                });
+            });
+        }
+    });
+    </script>
+    <?php
+});
+
+
+add_action('wp_ajax_check_license', function() {
+    check_ajax_referer('check_license_nonce', 'nonce');
+
+    $license_key = sanitize_text_field($_POST['license_key']);
+    $domain = home_url(); // Prends l'URL du site
+    $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";
+
+    $response = wp_remote_post($endpoint_url, [
+        'timeout' => 15,
+        'body'    => [
+            'license_key' => $license_key,
+            'domain'      => $domain
+        ]
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_send_json([
+            'success' => false,
+            'message' => "Erreur de communication avec le serveur de licence."
+        ]);
+    } else {
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        if (!empty($data['success']) && $data['success'] === true) {
+            wp_send_json([
+                'success' => true,
+                'message' => $data['message']
+            ]);
+        } else {
+            wp_send_json([
+                'success' => false,
+                'message' => !empty($data['message']) ? $data['message'] : "Validation de licence échouée."
+            ]);
+        }
+    }
+});
