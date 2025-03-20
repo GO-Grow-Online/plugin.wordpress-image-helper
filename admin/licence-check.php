@@ -23,5 +23,11 @@ add_action('wp_ajax_check_license', function() {
     } else {
         $data = json_decode(wp_remote_retrieve_body($response), true);
         wp_send_json($data);
+
+        if ($data['success']) {
+            update_option('go_image_renderer_license_status', 'active');
+        }else{
+            update_option('go_image_renderer_license_status', 'inactive');
+        }
     }
 });

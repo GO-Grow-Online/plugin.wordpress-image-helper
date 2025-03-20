@@ -75,7 +75,14 @@ function render_image($args = []) {
     $loading = $args['defer'] ? "lazy" : "eager";
     $mime_type = $img['mime_type'] ?? '';
     $is_svg = $mime_type == 'image/svg+xml';
-       
+
+    
+    $license_status = get_option('go_image_renderer_license_status', 'inactive');
+
+    if ($license_status !== 'active') {
+        echo '<p class="admin-msg">Image Renderer :</strong> Votre licence n’est pas activée. Veuillez la saisir dans les paramètres du plugin.</p>';
+    }
+
     ?>
 
     <div class="imgWrap<?php 
