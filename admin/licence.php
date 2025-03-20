@@ -81,16 +81,24 @@ add_action('admin_footer', function () {
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: "action=check_license&license_key=" + encodeURIComponent(licenseKey) + "&nonce=<?php echo wp_create_nonce('check_license_nonce'); ?>"
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        messageDiv.innerHTML = "<p style='color: green;'>✔ " + data.message + "</p>";
-                    } else {
-                        messageDiv.innerHTML = "<p style='color: red;'>❌ " + data.message + "</p>";
+                .then(response => response.text()) // CHANGÉ POUR .text() POUR DEBUGGER
+                .then(text => {
+                    console.log("Réponse brute du serveur :", text); // DEBUG
+                    try {
+                        let data = JSON.parse(text); // Essaye de convertir en JSON
+                        console.log("Données JSON parsées :", data);
+                        if (data.success) {
+                            messageDiv.innerHTML = "<p style='color: green;'>✔ " + data.message + "</p>";
+                        } else {
+                            messageDiv.innerHTML = "<p style='color: red;'>❌ " + data.message + "</p>";
+                        }
+                    } catch (error) {
+                        messageDiv.innerHTML = "<p style='color: red;'>❌ Erreur JSON : " + error.message + "</p>";
+                        console.error("Erreur JSON:", error, "Réponse brute:", text);
                     }
                 })
                 .catch(error => {
-                    messageDiv.innerHTML = "<p style='color: red;'>Erreur lors de la vérification.<br/><pre>" + error + "</pre><br/><pre>"+ data +"</pre></p>";
+                    messageDiv.innerHTML = "<p style='color: red;'>Erreur lors de la vérification.<br/><pre>" + error + "</pre></p>";
                     console.error(error);
                 });
             });
