@@ -90,7 +90,7 @@ add_action('admin_footer', function () {
                     }
                 })
                 .catch(error => {
-                    messageDiv.innerHTML = "<p style='color: red;'>Erreur lors de la vérification.</p>";
+                    messageDiv.innerHTML = "<p style='color: red;'>Erreur lors de la vérification.<br/><pre>". error ."</pre></p>";
                     console.error(error);
                 });
             });
