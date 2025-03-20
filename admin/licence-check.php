@@ -3,7 +3,7 @@
 add_action('wp_ajax_check_license', function() {
     check_ajax_referer('check_license_nonce', 'nonce');
 
-    $license_key = sanitize_text_field($_POST['go_image_renderer_license_key']);
+    $license_key = sanitize_text_field($_POST['license_key']);
     $domain = home_url();
     $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";
 
