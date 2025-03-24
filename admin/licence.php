@@ -10,7 +10,7 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
 
 add_filter('cron_schedules', function ($schedules) {
     $schedules['every_minute'] = [
-        'interval' => 60,
+        'interval' => 60, // 1 min.
         'display'  => __('Toutes les minutes')
     ];
     return $schedules;
@@ -151,6 +151,11 @@ function go_image_renderer_check_license_status() {
         ]
     ]);
 
+    if (is_wp_error($response)) {
+        update_option('go_image_renderer_license_status', 'inactive');
+        return;
+    }
+
     $data = json_decode(wp_remote_retrieve_body($response), true);
 
     if (!empty($data['success']) && $data['success'] === true) {
@@ -159,3 +164,12 @@ function go_image_renderer_check_license_status() {
         update_option('go_image_renderer_license_status', 'inactive');
     }
 }
+
+// Handling the sheduled verification with plugin activation/disactivation
+register_activation_hook(__FILE__, function () {
+    go_image_renderer_schedule_license_check();
+});
+
+register_deactivation_hook(__FILE__, function () {
+    wp_clear_scheduled_hook('go_image_renderer_monthly_license_check');
+});
