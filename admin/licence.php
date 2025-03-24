@@ -1,12 +1,13 @@
 <?php
-// Ajoute un lien vers la page de licence dans les actions du plugin
+
+// Add a link to plugin's "setting" page
 add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
     $settings_link = '<a href="' . esc_url(admin_url('admin.php?page=go-image-renderer-license')) . '">' . __('Configuration', 'text-domain') . '</a>';
     array_unshift($links, $settings_link);
     return $links;
 });
 
-// Ajoute la page de sous-menu pour la configuration de la licence
+// Add plugin's "setting" page in admin
 add_action('admin_menu', function () {
     add_submenu_page(
         'plugins.php',
@@ -18,19 +19,29 @@ add_action('admin_menu', function () {
     );
 });
 
-// Affichage de la page de configuration de la licence
+// Create configuration form
 function go_image_renderer_license_page() {
+    if (isset($_POST['go_image_renderer_license_key'])) {
+        $old_value = get_option('go_image_renderer_license_key', '');
+        $new_value = sanitize_text_field($_POST['go_image_renderer_license_key']);
+        update_option('go_image_renderer_license_key', $new_value);
+        do_action('update_option_go_image_renderer_license_key', $old_value, $new_value);
+    }
+
+    $license_key = get_option('go_image_renderer_license_key', '');
     ?>
     <div class="wrap">
         <h1>Licence - Image Renderer</h1>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields('go_image_renderer_licence_group');
-            do_settings_sections('go-image-renderer-license');
-            submit_button();
-            ?>
+        <form method="post">
+            <?php wp_nonce_field('update_license_key', 'license_nonce'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Clé de licence</th>
+                    <td><input type="text" name="go_image_renderer_license_key" value="<?php echo esc_attr($license_key); ?>" class="regular-text"></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
         </form>
-        <div id="license-validation-message" style="margin-top: 10px;"></div>
     </div>
     <?php
 }
@@ -58,52 +69,49 @@ add_action('admin_init', function () {
     );
 });
 
-// Ajout du script AJAX pour la vérification instantanée de la licence
-add_action('admin_footer', function () {
-    ?>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let inputField = document.querySelector('input[name="go_image_renderer_license_key"]');
-        let messageDiv = document.getElementById('license-validation-message');
+// Update licence status on form submit
+add_action('update_option_go_image_renderer_license_key', function ($old_value, $new_value) {
+    $license_key = sanitize_text_field($new_value);
+    $domain = home_url();
+    $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";
 
-        if (inputField) {
-            inputField.addEventListener('blur', function() {
-                let licenseKey = inputField.value.trim();
-                if (licenseKey.length === 0) {
-                    messageDiv.innerHTML = "<p style='color: red;'>Veuillez entrer une clé de licence.</p>";
-                    return;
-                }
+    $response = wp_remote_post($endpoint_url, [
+        'timeout' => 15,
+        'body'    => [
+            'license_key' => $license_key,
+            'domain'      => $domain
+        ]
+    ]);
 
-                messageDiv.innerHTML = "<p style='color: blue;'>Vérification en cours...</p>";
+    if (is_wp_error($response)) {
+        update_option('go_image_renderer_license_status', 'inactive');
+        update_option('go_image_renderer_license_message', 'Erreur de communication avec le serveur de licence.');
+        return;
+    }
 
-                fetch("<?php echo admin_url('admin-ajax.php'); ?>", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: "action=check_license&license_key=" + encodeURIComponent(licenseKey) + "&nonce=<?php echo wp_create_nonce('check_license_nonce'); ?>"
-                })
-                .then(response => response.text()) // CHANGÉ POUR .text() POUR DEBUGGER
-                .then(text => {
-                    console.log("Réponse brute du serveur :", text); // DEBUG
-                    try {
-                        let data = JSON.parse(text); // Essaye de convertir en JSON
-                        console.log("Données JSON parsées :", data);
-                        if (data.success) {
-                            messageDiv.innerHTML = "<p style='color: green;'>✔ " + data.message + "</p>";
-                        } else {
-                            messageDiv.innerHTML = "<p style='color: red;'>❌ " + data.message + "</p>";
-                        }
-                    } catch (error) {
-                        messageDiv.innerHTML = "<p style='color: red;'>❌ Erreur JSON : " + error.message + "</p>";
-                        console.error("Erreur JSON:", error, "Réponse brute:", text);
-                    }
-                })
-                .catch(error => {
-                    messageDiv.innerHTML = "<p style='color: red;'>Erreur lors de la vérification.<br/><pre>" + error + "</pre></p>";
-                    console.error(error);
-                });
-            });
+    $data = json_decode(wp_remote_retrieve_body($response), true);
+    if (!empty($data['success']) && $data['success'] === true) {
+        update_option('go_image_renderer_license_status', 'active');
+        update_option('go_image_renderer_license_message', $data['message']);
+    } else {
+        update_option('go_image_renderer_license_status', 'inactive');
+        update_option('go_image_renderer_license_message', $data['message'] ?? 'Licence invalide.');
+    }
+}, 10, 2);
+
+// Display response after form submission
+add_action('admin_notices', function () {
+    $screen = get_current_screen();
+    if ($screen->id !== 'plugins_page_go-image-renderer-license') return;
+
+    $status  = get_option('go_image_renderer_license_status', 'inactive');
+    $message = get_option('go_image_renderer_license_message', '');
+
+    if (!empty($message)) {
+        if ($status === 'active') {
+            echo '<div class="notice notice-success is-dismissible"><p>✅ Licence activée avec succès. ' . esc_html($message) . '</p></div>';
+        } else {
+            echo '<div class="notice notice-error is-dismissible"><p>❌ Échec de l’activation de la licence. ' . esc_html($message) . '</p></div>';
         }
-    });
-    </script>
-    <?php
+    }
 });
