@@ -7,6 +7,16 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links)
     return $links;
 });
 
+
+add_filter('cron_schedules', function ($schedules) {
+    $schedules['every_minute'] = [
+        'interval' => 60,
+        'display'  => __('Toutes les minutes')
+    ];
+    return $schedules;
+});
+
+
 // Add plugin's "setting" page in admin
 add_action('admin_menu', function () {
     add_submenu_page(
@@ -118,7 +128,7 @@ add_action('admin_notices', function () {
 // Monthly verification
 add_action('wp', function () {
     if (!wp_next_scheduled('go_image_renderer_monthly_license_check')) {
-        wp_schedule_event(time(), 'monthly', 'go_image_renderer_monthly_license_check');
+        wp_schedule_event(time(), 'every_minute', 'go_image_renderer_monthly_license_check');
     }
 });
 
