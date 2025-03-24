@@ -127,12 +127,12 @@ add_action('admin_notices', function () {
 
 // Monthly verification
 add_action('wp', function () {
-    if (!wp_next_scheduled('go_image_renderer_monthly_license_check')) {
-        wp_schedule_event(time(), 'every_minute', 'go_image_renderer_monthly_license_check');
+    if (!wp_next_scheduled('go_image_renderer_auto_license_check')) {
+        wp_schedule_event(time(), 'every_minute', 'go_image_renderer_auto_license_check');
     }
 });
 
-add_action('go_image_renderer_monthly_license_check', 'go_image_renderer_check_license_status');
+add_action('go_image_renderer_auto_license_check', 'go_image_renderer_check_license_status');
 
 function go_image_renderer_check_license_status() {
     $license_key = get_option('go_image_renderer_license_key', '');
@@ -171,5 +171,5 @@ register_activation_hook(__FILE__, function () {
 });
 
 register_deactivation_hook(__FILE__, function () {
-    wp_clear_scheduled_hook('go_image_renderer_monthly_license_check');
+    wp_clear_scheduled_hook('go_image_renderer_auto_license_check');
 });
