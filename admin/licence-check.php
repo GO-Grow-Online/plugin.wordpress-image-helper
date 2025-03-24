@@ -7,6 +7,11 @@ add_action('wp_ajax_check_license', function() {
     $domain = home_url();
     $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";
 
+
+    // Froce delete option to prevent Wordpress cache to falsen the message.
+    delete_option('go_image_renderer_license_status');
+    delete_option('go_image_renderer_license_message');
+
     $response = wp_remote_post($endpoint_url, [
         'timeout' => 15,
         'body'    => [
