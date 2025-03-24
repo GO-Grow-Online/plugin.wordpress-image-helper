@@ -109,9 +109,9 @@ add_action('admin_notices', function () {
 
     if (!empty($message)) {
         if ($status === 'active') {
-            echo '<div class="notice notice-success is-dismissible"><p>✅ Licence activée avec succès. ' . esc_html($message) . '</p></div>';
+            echo '<div class="notice notice-success is-dismissible"><p>✅ Licence activée avec succès. <br/>' . esc_html($message) . '</p></div>';
         } else {
-            echo '<div class="notice notice-error is-dismissible"><p>❌ Échec de l’activation de la licence. ' . esc_html($message) . '</p></div>';
+            echo '<div class="notice notice-error is-dismissible"><p>❌ Échec de l’activation de la licence. <br/>' . esc_html($message) . '</p></div>';
         }
     }
 });
