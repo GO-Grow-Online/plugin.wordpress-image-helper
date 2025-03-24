@@ -74,7 +74,7 @@ add_action('admin_init', function () {
 function go_image_renderer_validate_license_key($license_key) {
     $license_key = sanitize_text_field($license_key);
     $domain = home_url();
-    $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";
+    $endpoint_url = "https://grow-online.be/licences/go-image-renderer-licence-check.php";
 
     // Delete previous values to avoid cache issues
     delete_option('go_image_renderer_license_status');
@@ -141,7 +141,7 @@ add_action('go_image_renderer_auto_license_check', 'go_image_renderer_check_lice
 function go_image_renderer_check_license_status() {
     $license_key = get_option('go_image_renderer_license_key', '');
     $domain = home_url();
-    $endpoint_url = "https://grow-online.be/licences-check/go-image-renderer-licence-check.php";
+    $endpoint_url = "https://grow-online.be/licences/go-image-renderer-licence-check.php";
 
     if (empty($license_key)) {
         return;
