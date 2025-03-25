@@ -34,6 +34,12 @@ function go_image_renderer_license_page() {
                 <p>✅ Paramètres mis à jour.</p>
             </div>
         <?php endif; ?>
+        
+        <?php if (!empty($message)) : ?>
+            <div class="notice <?php echo ($status === 'active') ? 'notice-success' : 'notice-error'; ?>">
+                <p><?php echo esc_html($message); ?></p>
+            </div>
+        <?php endif; ?>
 
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
             <?php wp_nonce_field('go_image_renderer_license_nonce', 'go_image_renderer_license_nonce'); ?>
@@ -51,12 +57,6 @@ function go_image_renderer_license_page() {
 
             <?php submit_button('Enregistrer la clé de licence'); ?>
         </form>
-
-        <?php if (!empty($message)) : ?>
-            <div class="notice <?php echo ($status === 'active') ? 'notice-success' : 'notice-error'; ?>">
-                <p><?php echo esc_html($message); ?></p>
-            </div>
-        <?php endif; ?>
 
     </div>
     <?php
