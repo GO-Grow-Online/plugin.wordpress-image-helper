@@ -1,6 +1,6 @@
 <?php
 
-// Ajouter la page de configuration dans le menu "Réglages"
+// Add configuration page
 add_action('admin_menu', function () {
     add_submenu_page(
         'plugins.php',
@@ -12,7 +12,7 @@ add_action('admin_menu', function () {
     );
 });
 
-// Afficher la page de configuration avec un formulaire personnalisé
+// Create interface & field for key submission
 function go_image_renderer_license_page() {
     $license_key = get_option('go_image_renderer_license_key', '');
     $status = get_option('go_image_renderer_license_status', 'inactive');
@@ -55,7 +55,7 @@ function go_image_renderer_license_page() {
     <?php
 }
 
-// Gestion de la soumission du formulaire via `admin-post.php`
+// Form submission
 add_action('admin_post_go_image_renderer_save_license', function () {
     if (!isset($_POST['go_image_renderer_license_nonce']) || !wp_verify_nonce($_POST['go_image_renderer_license_nonce'], 'go_image_renderer_license_nonce')) {
         wp_die('Erreur de sécurité.');
@@ -67,23 +67,23 @@ add_action('admin_post_go_image_renderer_save_license', function () {
 
     $license_key = isset($_POST['go_image_renderer_license_key']) ? sanitize_text_field($_POST['go_image_renderer_license_key']) : '';
 
-    // Stocker la clé de licence
+    // Stock the key
     update_option('go_image_renderer_license_key', $license_key);
 
-    // Vérification immédiate après enregistrement
+    // Key check
     go_image_renderer_validate_license_key($license_key);
 
-    // Redirection avec confirmation
+    // Reload page with results
     wp_redirect(admin_url('plugins.php?page=go-image-renderer-license&updated=true'));
     exit;
 });
 
-// Vérification de la licence avec le serveur
+// Call endpoint for licence verification
 function go_image_renderer_validate_license_key($license_key) {
     $domain = home_url();
     $endpoint_url = "https://grow-online.be/licences/go-image-renderer-licence-check.php";
 
-    // Supprimer les anciennes valeurs
+    // Delete old stored values to avoid cache issues
     delete_option('go_image_renderer_license_status');
     delete_option('go_image_renderer_license_message');
 
@@ -112,7 +112,7 @@ function go_image_renderer_validate_license_key($license_key) {
     }
 }
 
-// Vérification automatique mensuelle
+// Monthly verification
 add_action('wp', function () {
     if (!wp_next_scheduled('go_image_renderer_auto_license_check')) {
         wp_schedule_event(time(), 'monthly', 'go_image_renderer_auto_license_check');
@@ -152,7 +152,7 @@ function go_image_renderer_check_license_status() {
     }
 }
 
-// Suppression de la tâche CRON à la désactivation du plugin
+// Delete monthly verification if plugin is disactivated
 register_deactivation_hook(__FILE__, function () {
     wp_clear_scheduled_hook('go_image_renderer_auto_license_check');
 });
