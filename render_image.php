@@ -78,7 +78,7 @@ function render_image($args = []) {
     
     $license_status = get_option('go_image_renderer_license_status', 'inactive');
 
-    if ($license_status !== 'active') {
+    if ($license_status !== 'active' && is_user_loddeg_in()) {
         echo '<p class="admin-msg">Image Renderer :</strong> Votre licence n’est pas activée. Veuillez la saisir dans les paramètres du plugin.</p>';
     }
 
