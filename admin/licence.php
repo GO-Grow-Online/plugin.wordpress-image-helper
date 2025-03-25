@@ -74,7 +74,7 @@ add_action('admin_post_go_image_renderer_save_license', function () {
     go_image_renderer_validate_license_key($license_key);
 
     // Redirection avec confirmation
-    wp_redirect(admin_url('options-general.php?page=go-image-renderer-license&updated=true'));
+    wp_redirect(admin_url('plugins.php?page=go-image-renderer-license&updated=true'));
     exit;
 });
 
