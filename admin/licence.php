@@ -1,16 +1,9 @@
 <?php
 
-// Ajouter un lien vers la page de configuration dans la liste des plugins
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), function ($links) {
-    $settings_link = '<a href="' . esc_url(admin_url('admin.php?page=go-image-renderer-license')) . '">' . __('Configuration', 'text-domain') . '</a>';
-    array_unshift($links, $settings_link);
-    return $links;
-});
-
 // Ajouter la page de configuration dans le menu "Réglages"
 add_action('admin_menu', function () {
     add_submenu_page(
-        'options-general.php',
+        'plugins.php',
         'Licence du Plugin',
         'Licence Plugin',
         'manage_options',
@@ -96,7 +89,7 @@ function go_image_renderer_validate_license_key($license_key) {
 
     $response = wp_remote_post($endpoint_url, [
         'timeout' => 15,
-        'body'    => [
+        'body' => [
             'license_key' => $license_key,
             'domain'      => $domain
         ]
