@@ -115,16 +115,6 @@ add_action('admin_notices', function () {
     }
 });
 
-
-
-add_filter('cron_schedules', function ($schedules) {
-    $schedules['every_minute'] = [
-        'interval' => 60,
-        'display'  => __('Every Minute')
-    ];
-    return $schedules;
-});
-
 // Monthly verification
 add_action('wp', function () {
 
@@ -132,7 +122,7 @@ add_action('wp', function () {
     wp_clear_scheduled_hook('go_image_renderer_auto_license_check');
 
     if (!wp_next_scheduled('go_image_renderer_auto_license_check')) {
-        wp_schedule_event(time(), 'every_minute', 'go_image_renderer_auto_license_check');
+        wp_schedule_event(time(), 'monthly', 'go_image_renderer_auto_license_check');
     }
 });
 
