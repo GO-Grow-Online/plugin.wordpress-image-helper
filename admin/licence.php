@@ -24,7 +24,7 @@ function go_image_renderer_license_page() {
 
         <?php if (!empty($_GET['updated'])) : ?>
             <div class="notice notice-success is-dismissible">
-                <p>✅ Paramètres mis à jour.</p>
+                <p>Paramètres mis à jour.</p>
             </div>
         <?php endif; ?>
         
