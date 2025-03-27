@@ -151,26 +151,3 @@ function go_image_renderer_check_license_status() {
         update_option('go_image_renderer_license_status', 'inactive');
     }
 }
-
-// Delete monthly verification if plugin is disactivated
-register_deactivation_hook(__FILE__, function () {
-    wp_clear_scheduled_hook('go_image_renderer_auto_license_check');
-
-    // Update WP db
-    update_option('go_image_renderer_license_status', 'inactive');
-    update_option('go_image_renderer_license_message', 'Le plugin a été désactivé. La licence est mise en pause.');
-
-    // Update licence database
-    $license_key = get_option('go_image_renderer_license_key', '');
-    $domain = home_url();
-
-    if (!empty($license_key)) {
-        wp_remote_post('https://grow-online.be/licences/go-image-renderer-licence-deactivate.php', [
-            'timeout' => 15,
-            'body'    => [
-                'license_key' => $license_key,
-                'domain'      => $domain,
-            ]
-        ]);
-    }
-});

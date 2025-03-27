@@ -20,6 +20,7 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
     'wordpress-image-helper'
 );  
 
+
 // Check if ACF in with us, otherwise plugin wont work
 if (!function_exists('acf_add_local_field_group')) {
     add_action('admin_notices', function() {
@@ -28,10 +29,35 @@ if (!function_exists('acf_add_local_field_group')) {
     return;
 }
 
+
+// Plugin disactivation handle - mandatory to have it in main file with the use of __FILE__
+register_deactivation_hook(__FILE__, function () {
+    wp_clear_scheduled_hook('go_image_renderer_auto_license_check');
+
+    // Update WP db
+    update_option('go_image_renderer_license_status', 'inactive');
+    update_option('go_image_renderer_license_message', 'Le plugin a été désactivé. La licence est mise en pause.');
+
+    // Update licence database
+    $license_key = get_option('go_image_renderer_license_key', '');
+    $domain = home_url();
+
+    if (!empty($license_key)) {
+        wp_remote_post('https://grow-online.be/licences/go-image-renderer-licence-deactivate.php', [
+            'timeout' => 15,
+            'body'    => [
+                'license_key' => $license_key,
+                'domain'      => $domain,
+            ]
+        ]);
+    }
+});
+
+
+// Required
 require_once __DIR__ . '/admin/wp_medias_settings.php';
 require_once __DIR__ . '/admin/acf_fields_settings.php';
 require_once __DIR__ . '/admin/licence.php';
-
 
 
 // Main function to render images
