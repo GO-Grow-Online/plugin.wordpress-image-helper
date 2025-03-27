@@ -160,7 +160,6 @@ register_deactivation_hook(__FILE__, function () {
     update_option('go_image_renderer_license_status', 'inactive');
     update_option('go_image_renderer_license_message', 'Le plugin a été désactivé. La licence est mise en pause.');
 
-
     // Update licence database
     $license_key = get_option('go_image_renderer_license_key', '');
     $domain = home_url();
