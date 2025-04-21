@@ -159,7 +159,6 @@ function render_image($args = []) {
                 
                 if (!$is_svg) { // Has image format but is not svg
 
-                    $format = $img['sizes'][$args['format']] ?: $img['sizes']['thumbnail'];
                     
                     // Fallback if the image format is not generated on the website
                     if (!$img['sizes'][$args['format']] == null) {
