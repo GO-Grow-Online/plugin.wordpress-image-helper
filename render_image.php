@@ -159,14 +159,22 @@ function render_image($args = []) {
                 
                 if (!$is_svg) { // Has image format but is not svg
 
-                    // Fallback if the image format is not generated on the website
                     $format = $img['sizes'][$args['format']] ?: $img['sizes']['thumbnail'];
+                    
+                    // Fallback if the image format is not generated on the website
+                    if (!$img['sizes'][$args['format']] == null) {
+                        $format = $img['sizes']['thumbnail'];
 
-                    if (!$img['sizes'][$args['format']] && is_user_logged_in()) {
-                        echo "<span class='admin-msg'>Format not found. Thumbnail loaded.</span>";
+                        if (is_user_logged_in()) {
+                            echo "<span class='admin-msg'>Format not found. Thumbnail loaded.</span>";
+                        }
+
+                    }else{
+                        $format = $img['sizes'][$args['format']];
                     }
 
                     printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($format), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+
                 } else { // Is SVG
                     printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                 }
