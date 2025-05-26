@@ -1,6 +1,6 @@
 {
 	"name": "GO - Image Renderer",
-	"version": "1.4.73", 
+	"version": "1.4.8", 
 	"download_url": "https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/archive/refs/heads/master.zip",
 
 	"homepage": "https://grow-online.be/",
@@ -15,7 +15,7 @@
 	"sections": {
 		"description": "Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. ",
 		"installation": "Download and install the archive in your Wordpress site. Use render_image() function to display lightweight and responsive images. An easy way to gain accessibility and performances.",
-		"changelog": "WARNING : changed 'loading_type' to 'defer' bool. TWEAK : fixed a bug where placeholder image was not used as a fallback. TWEAK : ACF field are now generated in the plugin.",
+		"changelog": "1.4.8/n/n• TWEAK : Fixed differences between mime types and image formats./n/n/nPreviously/n/n• WARNING : changed 'loading_type' to 'defer' bool./n• TWEAK : fixed a bug where placeholder image was not used as a fallback./n• TWEAK : ACF field are now generated in the plugin.",
 		"custom_section": "This is a custom section labeled 'Custom Section'."
 	},
 	
