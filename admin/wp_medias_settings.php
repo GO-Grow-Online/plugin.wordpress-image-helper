@@ -60,7 +60,7 @@ if (!function_exists('go_convert_all_sizes_to_webp')) {
         $upload_dir = wp_upload_dir();
         $basedir    = trailingslashit($upload_dir['basedir']);
 
-        // Convert All images sizes in webp
+        // 1) Convert All images sizes in webp
         if (!empty($metadata['sizes']) && is_array($metadata['sizes'])) {
             foreach ($metadata['sizes'] as $size_key => $size_data) {
 
@@ -101,7 +101,14 @@ if (!function_exists('go_convert_all_sizes_to_webp')) {
             }
         }
 
-        // 4) Convert original image
+
+        // 2) Update mim type
+        wp_update_post( [
+            'ID'             => $attachment_id,
+            'post_mime_type' => 'image/webp',
+        ] );
+
+        // 3) Convert original image
         // => $metadata['file'] has “Full” (or “-scaled” if WP > 5.3)
         if (!empty($metadata['file'])) {
             $image_path = get_attached_file($attachment_id);

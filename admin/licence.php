@@ -24,7 +24,7 @@ function go_image_renderer_license_page() {
 
         <?php if (!empty($_GET['updated'])) : ?>
             <div class="notice notice-success is-dismissible">
-                <p>Paramètres mis à jour.</p>
+                <p>Setting updated.</p>
             </div>
         <?php endif; ?>
         
@@ -40,7 +40,7 @@ function go_image_renderer_license_page() {
 
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="go_image_renderer_license_key">Clé de licence</label></th>
+                    <th scope="row"><label for="go_image_renderer_license_key">Licence key</label></th>
                     <td>
                         <input type="text" name="go_image_renderer_license_key" id="go_image_renderer_license_key"
                                value="<?php echo esc_attr($license_key); ?>" class="regular-text">
@@ -48,7 +48,7 @@ function go_image_renderer_license_page() {
                 </tr>
             </table>
 
-            <?php submit_button('Enregistrer la clé de licence'); ?>
+            <?php submit_button('Register lincence key'); ?>
         </form>
 
     </div>
@@ -58,11 +58,11 @@ function go_image_renderer_license_page() {
 // Form submission
 add_action('admin_post_go_image_renderer_save_license', function () {
     if (!isset($_POST['go_image_renderer_license_nonce']) || !wp_verify_nonce($_POST['go_image_renderer_license_nonce'], 'go_image_renderer_license_nonce')) {
-        wp_die('Erreur de sécurité.');
-    }
+        wp_die('Security error.');
+    }.
 
     if (!current_user_can('manage_options')) {
-        wp_die('Permissions insuffisantes.');
+        wp_die('Missing permissions.');
     }
 
     $license_key = isset($_POST['go_image_renderer_license_key']) ? sanitize_text_field($_POST['go_image_renderer_license_key']) : '';
