@@ -20,6 +20,35 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
     'wordpress-image-helper'
 );  
 
+// Automatic shutdown
+register_shutdown_function( function() {
+    $err = error_get_last();
+    // Error types
+    $fatals = [ E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR ];
+    if ( $err && in_array( $err['type'], $fatals, true ) ) {
+        // Vérifie qu’on est bien dans l’admin pour pouvoir désactiver
+        if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
+            // Disactivate
+            deactivate_plugins( plugin_basename( __FILE__ ) );
+            // Store a message in admin for next load
+            update_option( 'mon_plugin_crit_error', $err );
+        }
+    }
+} );
+
+// Display a notification for automatic shutdown
+add_action( 'admin_notices', function() {
+    if ( $err = get_option( 'mon_plugin_crit_error' ) ) {
+        ?>
+        <div class="notice notice-error">
+            <p><strong><?php echo __('Image renderer has been disactivated due to a error.', 'Non-editable strings'); ?></strong></p>
+            <pre style="white-space: pre-wrap;"><?php echo esc_html( $err['message'] ); ?></pre>
+        </div>
+        <?php
+        delete_option( 'mon_plugin_crit_error' );
+    }
+} );
+
 
 // Check if ACF in with us, otherwise plugin wont work
 if (!function_exists('acf_add_local_field_group')) {

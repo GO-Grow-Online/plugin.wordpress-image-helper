@@ -59,7 +59,7 @@ function go_image_renderer_license_page() {
 add_action('admin_post_go_image_renderer_save_license', function () {
     if (!isset($_POST['go_image_renderer_license_nonce']) || !wp_verify_nonce($_POST['go_image_renderer_license_nonce'], 'go_image_renderer_license_nonce')) {
         wp_die('Security error.');
-    }
+    }.
 
     if (!current_user_can('manage_options')) {
         wp_die('Missing permissions.');
