@@ -26,7 +26,6 @@ register_shutdown_function( function() {
     // Error types
     $fatals = [ E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR ];
     if ( $err && in_array( $err['type'], $fatals, true ) ) {
-        // Vérifie qu’on est bien dans l’admin pour pouvoir désactiver
         if ( is_admin() && current_user_can( 'activate_plugins' ) ) {
             // Disactivate
             deactivate_plugins( plugin_basename( __FILE__ ) );

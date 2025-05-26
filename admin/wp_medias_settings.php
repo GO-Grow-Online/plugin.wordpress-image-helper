@@ -197,6 +197,6 @@ add_action( 'admin_init', function() {
 
     set_transient( 'go_fix_mime', true, DAY_IN_SECONDS );
     add_action( 'admin_notices', function() {
-        echo '<div class="notice notice-success">✅ All mime types have been verified and fixed.</div>';
+        echo '<div class="notice notice-success"><p>✅ All mime types have been verified and fixed.</p></div>';
     } );
 } );
