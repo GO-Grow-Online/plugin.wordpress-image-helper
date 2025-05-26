@@ -152,3 +152,51 @@ if (!function_exists('go_convert_all_sizes_to_webp')) {
     }
     add_filter('wp_generate_attachment_metadata', 'go_convert_all_sizes_to_webp', 10, 2);
 }
+
+
+
+add_action( 'admin_init', function() {
+    // Run only once
+    if ( get_transient( 'go_fix_mime' ) ) {
+        return;
+    }
+
+    $args = [
+        'post_type'      => 'attachment',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+    ];
+    $atts = get_posts( $args );
+
+    foreach ( $atts as $id ) {
+        $file = get_attached_file( $id );
+        if ( ! file_exists( $file ) ) {
+            continue;
+        }
+
+        // Get mime type and file extention
+        $file_type = wp_check_filetype( $file );
+        $real_mime = $file_type['type']; // ex. image/webp, image/jpeg, etc.
+        $current_mime = get_post_mime_type( $id );
+
+        // Check if mim type is good
+        if ( $real_mime && $real_mime !== $current_mime ) {
+            $metadata = wp_generate_attachment_metadata( $id, $file );
+
+            if ( $metadata && ! is_wp_error( $metadata ) ) {
+                wp_update_attachment_metadata( $id, $metadata );
+            }
+
+            // Fix mim type
+            wp_update_post( [
+                'ID'             => $id,
+                'post_mime_type' => $real_mime,
+            ] );
+        }
+    }
+
+    set_transient( 'go_fix_mime', true, DAY_IN_SECONDS );
+    add_action( 'admin_notices', function() {
+        echo '<div class="notice notice-success">✅ All mime types have been verified and fixed.</div>';
+    } );
+} );
