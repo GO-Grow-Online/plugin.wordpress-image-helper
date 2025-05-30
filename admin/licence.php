@@ -4,8 +4,8 @@
 add_action('admin_menu', function () {
     add_submenu_page(
         'plugins.php',
-        'Licence du Plugin',
-        'Licence Plugin',
+        'Plugin Licence',
+        'Plugin Licence',
         'manage_options',
         'go-image-renderer-license',
         'go_image_renderer_license_page'

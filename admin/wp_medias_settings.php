@@ -49,6 +49,12 @@ if (!function_exists('get_svg')) {
 if (!function_exists('go_convert_all_sizes_to_webp')) {
     function go_convert_all_sizes_to_webp($metadata, $attachment_id) {
 
+        // Only convert images
+        $mime = get_post_mime_type($attachment_id);
+        if (strpos($mime, 'image/') !== 0) {
+            return $metadata;
+        }
+        
         $quality = 85;
 
         // WP Image editor API
