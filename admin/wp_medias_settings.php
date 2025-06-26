@@ -43,19 +43,49 @@ if (!function_exists('get_svg')) {
     }
 }
 
+// Generic helper for webp conversion
+if (!function_exists('go_convert_to_webp')) {
+
+    function go_convert_to_webp(string $file, int $quality = 85): ?string {
+
+        $editor = wp_get_image_editor($file);
+        if (is_wp_error($editor)) {
+            return null;
+        }
+        $editor->set_quality($quality);
+        // on redimensionne large originals pour éviter d’exploser la taille
+        $editor->resize(2560, 0);
+        $info = pathinfo($file);
+        $dest = "{$info['dirname']}/{$info['filename']}.webp";
+
+        $res = $editor->save($dest, 'image/webp');
+        if (is_wp_error($res)) {
+            return null;
+        }
+
+        @unlink($file);
+        return $dest;
+
+    }
+}
 
 
 // Create Webp Format for each uploaded images
 if (!function_exists('go_convert_all_sizes_to_webp')) {
     function go_convert_all_sizes_to_webp($metadata, $attachment_id) {
-
+        
         // Only convert images
-        $mime = get_post_mime_type($attachment_id);
-        if (strpos($mime, 'image/') !== 0) {
+        $mime    = get_post_mime_type($attachment_id);
+        $allowed = ['image/jpeg', 'image/png', 'image/gif'];
+
+        if (!in_array($mime, $allowed, true) || !function_exists('wp_get_image_editor')) {
             return $metadata;
         }
         
         $quality = 85;
+        $upload_dir = wp_upload_dir();
+        $basedir    = trailingslashit($upload_dir['basedir']);
+
 
         // WP Image editor API
         if (!function_exists('wp_get_image_editor')) {
@@ -63,104 +93,57 @@ if (!function_exists('go_convert_all_sizes_to_webp')) {
         }
 
         // Get upload dir, add a / with trailingslashit id not allready there
-        $upload_dir = wp_upload_dir();
-        $basedir    = trailingslashit($upload_dir['basedir']);
 
         // 1) Convert All images sizes in webp
-        if (!empty($metadata['sizes']) && is_array($metadata['sizes'])) {
-            foreach ($metadata['sizes'] as $size_key => $size_data) {
-
-                $size_file = path_join($basedir, $size_data['file']);
-                if (!file_exists($size_file)) {
+        if (!empty($metadata['sizes'])) {
+            foreach ($metadata['sizes'] as $key => &$size) {
+                $path = $basedir . $size['file'];
+                // skip déjà webp
+                if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'webp') {
                     continue;
                 }
-
-                $info = pathinfo($size_file);
-                $ext  = strtolower($info['extension'] ?? '');
-
-                // Ignore webp (if it exists) or svg generation
-                if (in_array($ext, ['webp', 'svg'])) {
-                    continue;
+                if ($new = go_convert_to_webp($path, $quality)) {
+                    $rel            = str_replace($basedir, '', $new);
+                    $size['file']   = $rel;
+                    $size['mime-type'] = 'image/webp';
                 }
-
-                // Convert in webp
-                $editor = wp_get_image_editor($size_file);
-                if (is_wp_error($editor)) {
-                    continue;
-                }
-
-                $editor->set_quality($quality);
-                $new_filename = $info['dirname'] . '/' . $info['filename'] . '.webp';
-
-                $result = $editor->save($new_filename, 'image/webp');
-                if (is_wp_error($result)) {
-                    continue;
-                }
-
-                // Delete previous JPG/PNG
-                @unlink($size_file);
-
-                // Update meta (filename + mime-type)
-                $relative_file = str_replace($basedir, '', $new_filename);
-                $metadata['sizes'][$size_key]['file']      = $relative_file;
-                $metadata['sizes'][$size_key]['mime-type'] = 'image/webp';
             }
+            unset($size);
         }
 
 
-        // 2) Update mim type
-        wp_update_post( [
-            'ID'             => $attachment_id,
-            'post_mime_type' => 'image/webp',
-        ] );
-
-        // 3) Convert original image
+        // 2) Convert original image
         // => $metadata['file'] has “Full” (or “-scaled” if WP > 5.3)
         if (!empty($metadata['file'])) {
-            $image_path = get_attached_file($attachment_id);
-            $info = pathinfo($image_path);
-            $ext  = strtolower($info['extension'] ?? '');
-            $max_width = 2560;
-
-            if (! in_array($ext, ['webp', 'svg'])) {
-                $editor = wp_get_image_editor($image_path);
-                if (! is_wp_error($editor)) {
-                    $editor->set_quality($quality);
-                    $editor->resize($max_width, 0); 
-            
-                    $new_filename = $info['dirname'] . '/' . $info['filename'] . '.webp';
-                    $result = $editor->save($new_filename, 'image/webp');
-                    if (! is_wp_error($result)) {
-                        $relative_file = str_replace($basedir, '', $new_filename);
-                        
-                        $metadata['file'] = $relative_file;
-                        if (isset($metadata['sizes']['scaled'])) {
-                            $metadata['sizes']['scaled']['file']      = $relative_file;
-                            $metadata['sizes']['scaled']['mime-type'] = 'image/webp';
-                        }
-
-                        update_attached_file($attachment_id, $new_filename);
-    
-
-                        
-                        if (file_exists($image_path)) {
-                            $scaled_version = str_replace("-scaled", "", $image_path);
-                            @unlink($image_path);
-                            @unlink($scaled_version);
-                        }
+            $orig = get_attached_file($attachment_id);
+            if (strtolower(pathinfo($orig, PATHINFO_EXTENSION)) !== 'webp') {
+                if ($new = go_convert_to_webp($orig, $quality)) {
+                    $rel = str_replace($basedir, '', $new);
+                    $metadata['file'] = $rel;
+                    if (isset($metadata['sizes']['scaled'])) {
+                        $metadata['sizes']['scaled']['file']      = $rel;
+                        $metadata['sizes']['scaled']['mime-type'] = 'image/webp';
                     }
+                    update_attached_file($attachment_id, $new);
                 }
             }
-
         }
+
+        // 3 Update mim type
+        wp_update_post([
+            'ID'             => $attachment_id,
+            'post_mime_type' => 'image/webp',
+        ]);
 
         return $metadata;
     }
+
     add_filter('wp_generate_attachment_metadata', 'go_convert_all_sizes_to_webp', 10, 2);
+
 }
 
 
-
+// Fix for errored mime types modifications
 add_action( 'admin_init', function() {
     // Run only once
     if ( get_transient( 'go_fix_mime' ) ) {
@@ -181,18 +164,29 @@ add_action( 'admin_init', function() {
         }
 
         // Get mime type and file extention
-        $file_type = wp_check_filetype( $file );
-        $real_mime = $file_type['type']; // ex. image/webp, image/jpeg, etc.
+        $ext = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
+        if ( $ext === 'svg' ) {
+            $real_mime = 'image/svg+xml';
+        } else {
+            $file_type = wp_check_filetype( $file ); // ex. image/webp, image/jpeg, etc.
+            $real_mime = $file_type['type'] ?? '';
+        }
+
         $current_mime = get_post_mime_type( $id );
 
         // Check if mim type is good
         if ( $real_mime && $real_mime !== $current_mime ) {
-            $metadata = wp_generate_attachment_metadata( $id, $file );
 
-            if ( $metadata && ! is_wp_error( $metadata ) ) {
-                wp_update_attachment_metadata( $id, $metadata );
+            if ( $ext !== 'svg' ) {
+
+                $metadata = wp_generate_attachment_metadata( $id, $file );
+
+                if ( $metadata && ! is_wp_error( $metadata ) ) {
+                    wp_update_attachment_metadata( $id, $metadata );
+                }
+
             }
-
+            
             // Fix mim type
             wp_update_post( [
                 'ID'             => $id,
