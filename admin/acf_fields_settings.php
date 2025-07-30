@@ -9,7 +9,7 @@ if( function_exists('acf_add_local_field_group') ) {
             array(
                 'key' => 'image_renderer_force_portrait_field',
                 'label' => 'Force to display full image',
-                'name' => 'force_portait',
+                'name' => 'force_portrait',
                 'type' => 'true_false',
                 'ui' => 1,
             ),
