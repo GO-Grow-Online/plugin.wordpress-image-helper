@@ -1,0 +1,85 @@
+///////////////////////////
+///// VIDEOS & IMAGES /////
+///////////////////////////
+
+
+.img-wrap, .vid-wrap {
+
+    img, video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+    
+    figure, picture {
+        width: 100%;
+        height: 100%;
+    }
+    
+    figure { margin: 0; }
+    
+    svg {
+        display: block;
+        box-sizing: border-box;
+    }
+    
+    &:not(.imgWrap--seamless) {
+        overflow: hidden;
+        border-radius: var(--go-media-radius, 5px);
+        box-shadow: var(--go-media-shadow, none);
+    }
+    
+    figcaption {
+        display: none;
+    }
+}
+
+.img-wrap {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    height: 100%;
+
+    svg {
+        width: 100%;
+    } 
+
+    &__bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+
+        // z-index: -1;
+        pointer-events: none;
+
+        object-fit: cover;
+        transform: scale(1.1);
+        filter: blur(1.5rem) brightness(1.2);
+    }
+
+    figure {
+        position: relative;
+        z-index: 5;
+    } 
+
+    img:not(.imgWrap__bg__img) {
+        object-fit: contain;
+    }
+
+    &--displayLegend {
+        figcaption {
+            display: block;
+            background-color: var(--go-media-caption-bg, #fff);
+            color: var(--go-media-caption-color, #000);
+            border-radius: var(--go-media-radius, 5px);
+            padding: calc(var(--go-media-sp, 1rem) * 0.25) calc(var(--go-media-sp, 1rem) * 0.75);
+            
+            position: absolute;
+            left: calc(var(--go-media-radius, 5px) * 0.5);
+            bottom: calc(var(--go-media-radius, 5px) * 0.5);
+        }
+    }
+}
