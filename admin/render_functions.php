@@ -83,7 +83,7 @@ function render_image($args = []) {
                             <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['medium']); ?>">
                         <?php endif; ?>
 
-                        <img width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
+                        <img class="img-wrap__img" width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
 
                     </picture>
                     <?php
@@ -97,10 +97,10 @@ function render_image($args = []) {
                             echo "<span class='admin-msg'>Format not found. Thumbnail loaded.</span>";
                         }
 
-                        printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($format), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                        printf('<img class="img-wrap__img" loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($format), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
 
                     } else { // Is SVG
-                        printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                        printf('<img class="img-wrap__img" loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                     }
                 }
                 ?>
@@ -116,7 +116,7 @@ function render_image($args = []) {
                 <?php endif; ?>
 
             <?php else : ?>
-                <img width="650" height="650" loading="<?php echo esc_attr($loading) ?>" src="<?php echo esc_url(plugins_url('/assets/image_placeholder.svg', __FILE__)); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
+                <img class="img-wrap__img" width="650" height="650" loading="<?php echo esc_attr($loading) ?>" src="<?php echo esc_url(plugins_url('/assets/image_placeholder.svg', __FILE__)); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
             <?php endif; ?>
         </div>
 
