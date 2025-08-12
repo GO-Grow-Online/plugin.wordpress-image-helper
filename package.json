@@ -1,5 +1,5 @@
 {
-  "name": "GO-image-renderer",
+  "name": "GO-media-renderer",
   "version": "1.0.0",
   "description": "A SCSS compiler...",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "sass": "1.63.3"
   },
   "scripts": {
-    "start": "sass assets/scss/styles.scss:assets/css/styles.css -w --style=compressed"
+    "start": "sass assets/scss/styles.scss:assets/css/go_media_renderer.css -w --style=compressed"
   },
   "author": "Grow Online",
   "license": "ISC"

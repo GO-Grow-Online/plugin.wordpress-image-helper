@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: GO - Image Renderer
- * Description: Display images with render_image(), a powerfull and light function that brings performance and accessibility to your theme. 
+ * Plugin Name: GO - Media Renderer
+ * Description: Display images & videos with render_image() & render_videos(), powerfull and light functions that brings performance and accessibility to your theme. 
  * Version: 1.5.1
  * Author: Grow Online
  */
@@ -24,7 +24,7 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 // Check if ACF in with us, otherwise plugin wont work
 if (!function_exists('acf_add_local_field_group')) {
     add_action('admin_notices', function() {
-        echo '<div class="notice notice-error"><p><strong>Plugins manquants</strong> : Rendez-vous dans "thème", "Install Plguins". Installez et/ou activez ensuite les plugins affichés.</p></div>';
+        echo '<div class="notice notice-error"><p><strong>' . __('Plugins manquants', 'Media renderer') . '</strong> : ' . __('Rendez-vous dans "thème", "Install Plguins". Installez et/ou activez ensuite les plugins affichés.', 'Media renderer') . '</p></div>';
     });
     return;
 }
@@ -36,7 +36,7 @@ register_deactivation_hook(__FILE__, function () {
 
     // Update WP db
     update_option('go_image_renderer_license_status', 'inactive');
-    update_option('go_image_renderer_license_message', 'Le plugin a été désactivé. La licence est mise en pause.');
+    update_option('go_image_renderer_license_message', __('Le plugin a été désactivé. La licence est mise en pause.', 'Media renderer'));
 
     // Update licence database
     $license_key = get_option('go_image_renderer_license_key', '');
@@ -79,28 +79,51 @@ if ($license_status === 'active') {
         if ( $image_url ) {
             $alt_text = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
             printf( '<div class="img-wrap"><img src="%s" alt="%s" ></div>', esc_url( $image_url ), esc_attr( $alt_text ));
-            echo "<span class='admin-msg'>" . __("Image renderer's licence is not active. The performances of your website are impacted.", "Image_renderer") . "</span>";
-        } else {
             if ( is_user_logged_in() ) {
-                echo '<span class="admin-msg">Image renderer is not active, and the required image was not found.</span>';
+                echo "<span class='admin-msg'>" . __("Image renderer's licence is not active. The performances of your website are impacted.", "Media renderer") . "</span>";
             }
         }
     }
 
+    function render_video( $args = [] ) {
+        if ( empty( $args['video'] ) || ! is_array( $args['video'] ) || ! isset( $args['video']['ID'] ) ) {
+            if ( is_user_logged_in() ) {
+                echo '<span class="admin-msg">' . __("Media renderer is not active, and the video data is invalid.", 'Media renderer') . '</span>';
+            }
+            return;
+        }
+
+        $video_id = $args['video']['ID'];
+        $video_url = wp_get_attachment_url( $video_id );
+
+        $thumbnail_id = get_field('thumbnail', $video_id);
+        $poster_url = $thumbnail_id ? wp_get_attachment_image_url($thumbnail_id, 'full') : '';
+
+        if ( $video_url ) {
+            if ( is_user_logged_in() ) {
+                echo '<span class="admin-msg">' . __("Video renderer's licence is not active. The performances of your website are impacted.", 'Media renderer') . '</span>';
+            }
+
+            printf(
+                '<div class="vid-wrap"><video controls preload="auto" poster="%s"><source src="%s" type="%s"></video></div>',
+                esc_url($poster_url),
+                esc_url( $video_url ),
+                esc_attr( get_post_mime_type( $video_id ) )
+            );
+        }
+    }
+
+
     function get_svg($svg) {
         return '<img src="'. $svg['url'] .'"/>'; 
-        return '<span class="admin-msg">Image renderer is not active. Icons cannot be rendered.</span>'; 
+        return "<span class='admin-msg'>. __('Media renderer is not active. Icons cannot be rendered.', 'Media renderer') .'</span>"; 
     }
 }
 
 
-add_action('wp_enqueue_scripts', 'go_image_renderer_styles');
+add_action('wp_enqueue_scripts', 'go_media_renderer_code');
 
-function go_image_renderer_styles() {
-    wp_enqueue_style(
-        'go-image-renderer-css',
-        plugins_url('assets/css/styles.css', __FILE__),
-        [],
-        '1.5.1'
-    );
+function go_media_renderer_code() {
+    wp_enqueue_script( 'go-media-renderer-js',  plugins_url('assets/js/go_media_renderer.js', __FILE__));
+    wp_enqueue_style( 'go-media-renderer-css', plugins_url('assets/css/go_media_renderer.css', __FILE__));
 }

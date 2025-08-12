@@ -52,7 +52,7 @@ function render_image($args = []) {
                 <?php 
                 // Render blured bg image in "force_portrait" mode
                 if ($args['force_portrait'] && !$is_svg) { 
-                    echo '<!--googleoff: index--><img class="imgWrap__bg__img" loading="'. esc_attr($loading) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
+                    echo '<!--googleoff: index--><img class="img-wrap__bg" loading="'. esc_attr($loading) .'" type="'. esc_attr($mime_type) .'" src="'. esc_url($img['sizes']['thumbnail']) .'" alt="'. esc_attr($img['alt']) .'"><!--googleon: index-->'; }
                 ?>
                 
                 <?php if ($args['figcaption']) : ?>
@@ -120,6 +120,125 @@ function render_image($args = []) {
             <?php endif; ?>
         </div>
 
+    <?php
+}
+
+function render_video($args = []) {
+
+    $video = $args['video'];
+    
+    if (empty($video)) {
+        return;
+    }
+
+    $force_portrait = !empty($img) ? get_field('force_portrait', $img['id']) : false;
+    $display_legend = !empty($img) ? get_field('display_legend', $img['id']) : false;
+    $seamless = !empty($img) ? get_field('seamless', $img['id']) : false;
+
+    $defaults = [
+        'autoplay' => null,
+        'loop' => null,
+        'muted' => false,
+
+        'controls' => true,
+        'controls_muted' => true,
+        'controls_fs' => true,
+        
+        'fs_vid' => true,
+    ];
+    
+    // Combine both argument arrays - $args is primary
+    $args = wp_parse_args($args, $defaults);
+
+    $figcaption = isset($args['figcaption']) ? $args['figcaption'] : false;
+
+    // Get ACF fields for video attributes
+    $autoplay = get_field('autoplay', $video['ID']);
+    $loop = get_field('loop', $video['ID']);
+    $muted = get_field('muted', $video['ID']);
+    $controls = get_field('controls', $video['ID']);
+    $controls_muted = get_field('controls_muted', $video['ID']);
+    $controls_fs = get_field('controls_fs', $video['ID']);
+    $fs = get_field('fs_vid', $video['ID']);
+    $resp_video = get_field('vid_resp', $video['ID']);
+    $thumbnail_id = get_field('thumbnail', $video['ID']);
+    
+    // Set video attributes
+    $autoplay_attr = $autoplay ? ' vid-wrap--autoplay' : '';
+    $loop_attr = $loop ? ' vid-wrap--loop' : '';
+    $muted_attr = $muted ? ' vid-wrap--muted' : '';
+
+    // HTML output
+    ?>
+    <div class="vid-wrap vid-wrap--unTouched vid-wrap--loading vid-wrap--progress-loading<?php echo $autoplay ? ' playing' : ''; ?>">
+
+        <?php if ($figcaption): ?>
+            <figure itemscope itemtype="http://schema.org/VideoObject">
+        <?php endif; ?>
+        
+        <video class="vid-wrap__video" <?php echo $loop_attr; echo $muted_attr; echo $autoplay_attr; ?>
+               preload="auto" width="<?php echo esc_attr($video['width']); ?>" height="<?php echo esc_attr($video['height']); ?>">
+            
+            <?php if ($fs): ?>
+                <source data-src="<?php echo esc_url($video['url']); ?>" src="..." type="video/<?php echo esc_attr($video['subtype']); ?>" media="only screen and (min-width: 720px)">
+                <?php if ($resp_video): ?>
+                    <source data-src="<?php echo esc_url($resp_video['url']); ?>" src="..." type="video/<?php echo esc_attr($resp_video['subtype']); ?>" media="only screen and (max-width: 719px)">
+                <?php endif; ?>
+            <?php else: ?>
+                <source data-src="<?php echo esc_url($video['url']); ?>" src="..." type="video/<?php echo esc_attr($video['subtype']); ?>">
+            <?php endif; ?>
+        </video>
+
+        <?php if ($controls): ?>
+            <div class="vid-wrap__controls" data-state="hidden">
+                <button class="playpause" type="button" data-state="play" aria-label="<?php echo esc_attr(__('Play/Pause', 'go-media-renderer')); ?>">
+                    <?php echo get_svg(plugins_url('../assets/icons/play.svg', __FILE__), true); ?>
+                    <?php echo get_svg(plugins_url('../assets/icons/pause.svg', __FILE__), true); ?>
+                </button>
+                <button class="stop" type="button" data-state="stop" aria-label="<?php echo esc_attr(__('Stop', 'go-media-renderer')); ?>">
+                    <?php echo get_svg(plugins_url('../assets/icons/stop.svg', __FILE__), true); ?>
+                </button>
+                <div class="vid-wrap__controls__progress">
+                    <progress value="0" min="0"></progress>
+                </div>
+                <?php if (!$muted && $controls_muted): ?>
+                    <button class="mute" type="button" data-state="mute" aria-label="<?php echo esc_attr(__('Activer/désactiver sourdine', 'go-media-renderer')); ?>">
+                        <?php echo get_svg(plugins_url('../assets/icons/mute.svg', __FILE__), true); ?>
+                        <?php echo get_svg(plugins_url('../assets/icons/unmute.svg', __FILE__), true); ?>
+                    </button>
+                <?php endif; ?>
+                <?php if ($controls_fs): ?>
+                    <button class="fs" type="button" data-state="go-fullscreen" aria-label="<?php echo esc_attr(__('Plein écran', 'go-media-renderer')); ?>">
+                        <?php echo get_svg(plugins_url('../assets/icons/fullscreen.svg', __FILE__), true); ?>
+                    </button>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php if ($figcaption): ?>
+            <figcaption><?php echo esc_html($video['caption']); ?></figcaption>
+            <meta itemprop="url" content="<?php echo esc_url($video['url']); ?>" />
+            <meta itemprop="description" content="<?php echo esc_html($video['description']); ?>" />
+            <meta itemprop="name" content="<?php echo esc_html($video['title']); ?>" />
+            <?php
+            // Utilisez render_image() ici si vous avez besoin d'une balise complète
+            if (!empty($thumbnail_id)) {
+                $thumbnail_url = wp_get_attachment_image_url($thumbnail_id, 'full');
+                echo '<meta itemprop="thumbnailUrl" content="' . esc_url($thumbnail_url) . '" />';
+            }
+            ?>
+            <meta itemprop="uploadDate" content="<?php echo esc_attr(date('Y-m-d\TH:i:s\Z', strtotime($video['date']))); ?>" />
+            <meta itemprop="contentUrl" content="<?php echo esc_url($video['url']); ?>" />
+            </figure>
+        <?php endif; ?>
+
+        <?php if (!empty($thumbnail_id)): ?>
+            <?php
+            // Votre fonction render_image() est appelée ici avec le bon format
+            render_image(['img' => get_field('thumbnail', $video['ID'])]);
+            ?>
+        <?php endif; ?>
+    </div>
     <?php
 }
 
