@@ -163,11 +163,11 @@
     &--loading {
 
         .img-wrap {
-            opacity: 1;
+            opacity: 1!important;
         }
 
         &:before, &:after {
-            opacity: 1;
+            opacity: 1!important;
         }
 
         &::after {
