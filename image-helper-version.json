@@ -1,13 +1,13 @@
 {
 	"name": "GO - Media Renderer",
-	"version": "1.5.1.1", 
+	"version": "2.0.2", 
 	"download_url": "https://github.com/GO-Grow-Online/plugin.wordpress-image-helper/archive/refs/heads/master.zip",
 
 	"homepage": "https://grow-online.be/",
 	"requires": "4.5", 
 	"tested": "4.8",
 	"last_updated": "2025-04-21 11:18:00",
-	"upgrade_notice": "WARNING : changed 'loading_type' to 'defer',  'image_format' to 'format' bool. TWEAK : fixed a bug where placeholder image was not used as a fallback. TWEAK : ACF field are now generated in the plugin. TWEAK : added a fallback when image format is not available.",
+	"upgrade_notice": "Introducing video rendering : Image renderer becomes media renderer. Now rendering videos with a custom player and multiple fields and options with it (mute, autoplay,...)",
 
 	"author": "Grow Online", 
 	"author_homepage": "https://grow-online.be/",

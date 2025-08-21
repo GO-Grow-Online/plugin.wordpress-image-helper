@@ -32,12 +32,12 @@ function activate_video_controls(videoWrapper) {
     const video = videoWrapper.querySelector('.vid-wrap__video');
     
     // Get all control buttons and elements
-    const playpause = videoControls.querySelector('.playpause');
-    const stop = videoControls.querySelector('.stop');
-    const mute = videoControls.querySelector('.mute');
-    const progress = videoControls.querySelector('.progress');
-    const progressBar = videoControls.querySelector('.progress progress');
-    const fullscreen = videoWrapper.querySelector('.fs');
+    const playpause = videoControls.querySelector('.vid-wrap__controls__playpause');
+    const stop = videoControls.querySelector('.vid-wrap__controls__stop');
+    const mute = videoControls.querySelector('.vid-wrap__controls__mute');
+    const progress = videoControls.querySelector('.vid-wrap__controls__progress');
+    const progressBar = videoControls.querySelector('.vid-wrap__controls__progress progress');
+    const fullscreen = videoWrapper.querySelector('.vid-wrap__controls__fs');
 
     // Remove the 'unTouched' class on the first interaction
     playpause.addEventListener('click', function() {
@@ -82,23 +82,29 @@ function activate_video_controls(videoWrapper) {
     }
 
     // Event listeners for video controls
-    playpause.addEventListener('click', function() {
-      if (video.paused || video.ended) {
-        video.play();
-      } else {
+    if (playpause) {
+      playpause.addEventListener('click', function() {
+        if (video.paused || video.ended) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      });
+    }
+
+    if (stop) {
+      stop.addEventListener('click', function() {
         video.pause();
-      }
-    });
+        video.currentTime = 0;
+      });
+    }
 
-    stop.addEventListener('click', function() {
-      video.pause();
-      video.currentTime = 0;
-    });
-
-    mute.addEventListener('click', function() {
-      video.muted = !video.muted;
-      changeButtonState('mute');
-    });
+    if (mute) {
+      mute.addEventListener('click', function() {
+        video.muted = !video.muted;
+        changeButtonState('mute');
+      });
+    }
 
     progress.addEventListener('click', function(e) {
       const rect = progress.getBoundingClientRect();
@@ -119,6 +125,9 @@ function activate_video_controls(videoWrapper) {
     if (fullscreen) {
       fullscreen.addEventListener('click', handleFullscreen);
     }
+
+    // If video is on autoplay, chamgne button state to "playing"
+    if(video.classList.contains('vid-wrap--autoplay')) { changeButtonState('playpause');; }
   }
 }
 
@@ -158,6 +167,7 @@ function defer_video(video, wrapper) {
       }
     });
   }
+
 }
 
 // Attach the main initialization function to the DOMContentLoaded event.

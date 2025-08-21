@@ -24,7 +24,7 @@
         box-sizing: border-box;
     }
     
-    &:not(.imgWrap--seamless) {
+    &:not(.img-wrap--seamless) {
         overflow: hidden;
         border-radius: var(--go-media-radius, 5px);
         box-shadow: var(--go-media-shadow, none);

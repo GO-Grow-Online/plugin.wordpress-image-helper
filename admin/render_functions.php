@@ -83,7 +83,7 @@ function render_image($args = []) {
                             <source media="(min-width: 1024px)" type="<?php echo esc_attr($mime_type); ?>" srcset="<?php echo esc_url($img['sizes']['medium']); ?>">
                         <?php endif; ?>
 
-                        <img width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
+                        <img class="img-wrap__img" width="<?php echo $w; ?>" width="<?php echo $h; ?>" loading="<?php echo esc_attr($loading); ?>" alt="<?php echo esc_attr($img['alt']); ?>" src="<?php echo esc_url($medium); ?>">
 
                     </picture>
                     <?php
@@ -97,10 +97,10 @@ function render_image($args = []) {
                             echo "<span class='admin-msg'>Format not found. Thumbnail loaded.</span>";
                         }
 
-                        printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($format), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                        printf('<img class="img-wrap__img" loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($format), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
 
                     } else { // Is SVG
-                        printf('<img loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
+                        printf('<img class="img-wrap__img" loading="%s" type="%s" src="%s" alt="%s" width="%d" height="%d">', esc_attr($loading), esc_attr($mime_type), esc_url($img['url']), esc_attr($img['alt']), esc_attr($img['width']), esc_attr($img['height']));
                     }
                 }
                 ?>
@@ -116,7 +116,7 @@ function render_image($args = []) {
                 <?php endif; ?>
 
             <?php else : ?>
-                <img width="650" height="650" loading="<?php echo esc_attr($loading) ?>" src="<?php echo esc_url(plugins_url('/assets/image_placeholder.svg', __FILE__)); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
+                <img class="img-wrap__img" width="650" height="650" loading="<?php echo esc_attr($loading) ?>" src="<?php echo esc_url(plugins_url('/assets/image_placeholder.svg', __FILE__)); ?>" alt="Logo de <?php bloginfo('name'); ?> - Aucune image trouvée">
             <?php endif; ?>
         </div>
 
@@ -164,13 +164,13 @@ function render_video($args = []) {
     $thumbnail_id = get_field('thumbnail', $video['ID']);
     
     // Set video attributes
-    $autoplay_attr = $autoplay ? ' vid-wrap--autoplay' : '';
-    $loop_attr = $loop ? ' vid-wrap--loop' : '';
-    $muted_attr = $muted ? ' vid-wrap--muted' : '';
+    $autoplay_attr = $autoplay ? ' autoplay' : '';
+    $loop_attr = $loop ? ' loop' : '';
+    $muted_attr = $muted ? ' muted' : '';
 
     // HTML output
     ?>
-    <div class="vid-wrap vid-wrap--unTouched vid-wrap--loading vid-wrap--progress-loading<?php echo $autoplay ? ' playing' : ''; ?>">
+    <div class="vid-wrap vid-wrap--unTouched vid-wrap--loading vid-wrap--progress-loading<?php echo $autoplay ? ' vid-wrap--playing' : ''; ?>">
 
         <?php if ($figcaption): ?>
             <figure itemscope itemtype="http://schema.org/VideoObject">
@@ -191,24 +191,24 @@ function render_video($args = []) {
 
         <?php if ($controls): ?>
             <div class="vid-wrap__controls" data-state="hidden">
-                <button class="playpause" type="button" data-state="play" aria-label="<?php echo esc_attr(__('Play/Pause', 'go-media-renderer')); ?>">
+                <button class="vid-wrap__controls__playpause" type="button" data-state="play" aria-label="<?php echo esc_attr(__('Play/Pause', 'go-media-renderer')); ?>">
                     <?php echo get_svg(plugins_url('../assets/icons/play.svg', __FILE__), true); ?>
                     <?php echo get_svg(plugins_url('../assets/icons/pause.svg', __FILE__), true); ?>
                 </button>
-                <button class="stop" type="button" data-state="stop" aria-label="<?php echo esc_attr(__('Stop', 'go-media-renderer')); ?>">
+                <button class="vid-wrap__controls__stop" type="button" data-state="stop" aria-label="<?php echo esc_attr(__('Stop', 'go-media-renderer')); ?>">
                     <?php echo get_svg(plugins_url('../assets/icons/stop.svg', __FILE__), true); ?>
                 </button>
                 <div class="vid-wrap__controls__progress">
                     <progress value="0" min="0"></progress>
                 </div>
                 <?php if (!$muted && $controls_muted): ?>
-                    <button class="mute" type="button" data-state="mute" aria-label="<?php echo esc_attr(__('Activer/désactiver sourdine', 'go-media-renderer')); ?>">
+                    <button class="vid-wrap__controls__mute" type="button" data-state="mute" aria-label="<?php echo esc_attr(__('Activer/désactiver sourdine', 'go-media-renderer')); ?>">
                         <?php echo get_svg(plugins_url('../assets/icons/mute.svg', __FILE__), true); ?>
                         <?php echo get_svg(plugins_url('../assets/icons/unmute.svg', __FILE__), true); ?>
                     </button>
                 <?php endif; ?>
                 <?php if ($controls_fs): ?>
-                    <button class="fs" type="button" data-state="go-fullscreen" aria-label="<?php echo esc_attr(__('Plein écran', 'go-media-renderer')); ?>">
+                    <button class="vid-wrap__controls__fs" type="button" data-state="go-fullscreen" aria-label="<?php echo esc_attr(__('Plein écran', 'go-media-renderer')); ?>">
                         <?php echo get_svg(plugins_url('../assets/icons/fullscreen.svg', __FILE__), true); ?>
                     </button>
                 <?php endif; ?>
