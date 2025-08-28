@@ -170,5 +170,8 @@ function defer_video(video, wrapper) {
 
 }
 
-// Attach the main initialization function to the DOMContentLoaded event.
-document.addEventListener('DOMContentLoaded', init_defer_video);
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.querySelector('.vid-wrap')) {
+    init_defer_video(); 
+  }
+});
