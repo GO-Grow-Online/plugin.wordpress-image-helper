@@ -84,18 +84,19 @@
                 transform: scale(0.75);
             }
 
-            &.playpause {
-                background-color: var(--go-media-play-bg, #000);
-                color: var(--go-media-play-color, #fff);
+        }
+        
+        &__playpause {
+            background-color: var(--go-media-play-bg, #000);
+            color: var(--go-media-play-color, #fff);
 
-                &[data-state="play"] { svg.pause-icon { display: none; } }
-                &[data-state="pause"] { svg.play-icon { display: none; } }
-            }
+            &[data-state="play"] { svg.pause-icon { display: none; } }
+            &[data-state="pause"] { svg.play-icon { display: none; } }
+        }
 
-            &.mute {
-                &[data-state="mute"] { svg.unmute-icon { display: none; } }
-                &[data-state="unmute"] { svg.mute-icon { display: none; } }
-            }
+        &__mute {
+            &[data-state="mute"] { svg.unmute-icon { display: none; } }
+            &[data-state="unmute"] { svg.mute-icon { display: none; } }
         }
 
         &__progress {
